@@ -12,6 +12,8 @@
 
   <style>
 
+    body,h1,h2,p,section{margin: 0; padding: 0;}
+    
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -21,24 +23,30 @@
       --muted:  rgba(240,240,240,.62);
       --dim:    rgba(240,240,240,.36);
       --accent: #FF0101;
-
-      --lh-body: 1.85;   
-      --lh-head: 1.12;   
-      --ls-body: .006em; 
+      --lh-body: 1.85;
+      --lh-head: 1.12;
+      --ls-body: .006em;
     }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'SUIT', sans-serif;
       overflow-x: hidden;
       overflow-y: hidden;
-
       line-height: var(--lh-body);
       letter-spacing: var(--ls-body);
+      /* min-width: 1024px; 삭제됨 (잘림 현상 해결) */
     }
-    body.ready { overflow-y: auto; }
+    
+    body.ready { overflow-y: auto; overflow-x: auto; }
+    
+    #main { overflow-x: hidden; }
+
     a    { color: inherit; text-decoration: none; }
     img, video { display: block; width: 100%; }
 
@@ -63,12 +71,12 @@
       white-space: nowrap; opacity: 0;
     }
     .intro-word {
-      font-size: 36px; font-weight: 600; letter-spacing: .18em;
+      font-size: clamp(12px, 2.5vw, 36px); font-weight: 600; letter-spacing: .18em;
       transition: opacity .4s, transform .4s, color .4s;
     }
     .intro-word.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     #introAxis {
-      font-size: 140px; font-weight: 700; letter-spacing: .12em;
+      font-size: clamp(40px, 9.7vw, 140px); font-weight: 700; letter-spacing: .12em;
       transition: opacity .45s, transform 2.4s cubic-bezier(.18,.78,.12,1);
     }
     #introAxis.show   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -77,7 +85,7 @@
     .logo {
       position: fixed; top: 24px; left: 28px; z-index: 200;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 32px; font-weight: 700; letter-spacing: .05em;
+      font-size: clamp(14px, 2.2vw, 32px); font-weight: 700; letter-spacing: .05em;
     }
     .side-nav {
       position: fixed; right: 28px; top: 50%;
@@ -87,7 +95,7 @@
     .side-nav a {
       position: relative; padding-right: 16px;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 13px; font-weight: 500;
+      font-size: clamp(9px, 1vw, 13px); font-weight: 500;
       color: rgba(255,255,255,.46);
       transition: color .25s, transform .25s; white-space: nowrap;
     }
@@ -102,13 +110,11 @@
     .side-nav a.active           { color: #fff; font-weight: 700; }
     .side-nav a.active::after    { background: var(--accent); box-shadow: 0 0 10px rgba(255,1,1,.5); transform: translateY(-50%) scale(1.2); }
 
-    #main { opacity: 0; transition: opacity 1s; }
-    #main.show { opacity: 1; }
-    section { position: relative; overflow: hidden; }
+    section { position: relative; overflow: hidden; width: 100%; }
 
     .eyebrow {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px; font-weight: 500;
+      font-size: clamp(8px, 0.8vw, 11px); font-weight: 500;
       letter-spacing: .28em; text-transform: uppercase; color: var(--dim);
     }
 
@@ -131,12 +137,12 @@
     }
     .hero-kicker {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 12px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+      font-size: clamp(9px, 0.9vw, 12px); font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
       color: rgba(240,240,240,.5); margin-bottom: 14px;
     }
-    .hero-title { font-size: 74px; line-height: 1.08; letter-spacing: -.04em; font-weight: 800; word-break: keep-all; }
+    .hero-title { font-size: clamp(24px, 5.1vw, 74px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; word-break: keep-all; }
     .hero-title span { color: var(--accent); }
-    .hero-desc { margin-top: 16px; max-width: 460px; font-size: 18px; line-height: 1.9; color: var(--muted); letter-spacing: .01em; }
+    .hero-desc { margin-top: 16px; max-width: 460px; font-size: clamp(12px, 1.2vw, 18px); line-height: 1.9; color: var(--muted); letter-spacing: .01em; }
 
     .whyus { min-height: 100vh; background: #000; }
     .whyus-bg {
@@ -150,17 +156,18 @@
       text-align: center; padding: 80px 28px;
       width: min(1540px, calc(100vw - 56px)); margin: 0 auto;
     }
-    .whyus .eyebrow { margin-bottom: 28px; letter-spacing: .32em; }
+    .whyus .eyebrow { margin-bottom: 2vw; letter-spacing: .32em; }
     .whyus-title {
-      font-size: clamp(60px, 9vw, 160px);
+      font-size: clamp(24px, 8.5vw, 160px);
       line-height: 1.06; letter-spacing: -.07em; font-weight: 800;
       word-break: keep-all; text-wrap: balance;
     }
     .whyus-title span, .whyus-desc span { color: var(--accent); }
     .whyus-desc {
-      width: min(1100px, calc(100vw - 100px)); margin-top: 52px;
-      font-size: clamp(18px, 1.5vw, 26px); line-height: 2.2; text-align: justify;
+      width: min(1100px, calc(100vw - 100px)); margin-top: 4vw;
+      font-size: clamp(12px, 1.6vw, 26px); line-height: 2.2; text-align: justify;
       color: rgba(255,255,255,.76); letter-spacing: .01em;
+      word-break: keep-all;
     }
     .reveal-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
     .reveal-step {
@@ -176,7 +183,7 @@
     }
 
     #features-viewport {
-      position: relative; width: 100vw; height: 100vh; overflow: hidden;
+      position: relative; width: 100vw; max-width: 100%; height: 100vh; overflow: hidden;
       background: linear-gradient(180deg, #4A90E2 0%, #87CEFA 100%);
     }
     .building-bg {
@@ -194,43 +201,42 @@
     #box1-a { justify-content: flex-end; }
     #box1-b { justify-content: flex-start; padding-left: 15vw; }
     .diag-text { font-weight: 800; letter-spacing: -.05em; line-height: 1; word-break: keep-all; white-space: nowrap; }
-    #text1-a { color: var(--text); font-size: clamp(50px, 8.5vw, 150px); }
-    #text1-b { color: var(--accent); font-size: clamp(70px, 11vw, 190px); }
-    .feature-top-text { position: absolute; top: 12%; left: 8%; font-size: clamp(60px, 8vw, 120px); font-weight: 800; white-space: nowrap; z-index: 5; }
+    #text1-a { color: var(--text); font-size: clamp(24px, 8.5vw, 150px); }
+    #text1-b { color: var(--accent); font-size: clamp(32px, 11vw, 190px); }
+    .feature-top-text { position: absolute; top: 12%; left: 8%; font-size: clamp(24px, 8vw, 120px); font-weight: 800; white-space: nowrap; z-index: 5; }
     .feature-side-menu { position: absolute; top: 68%; right: 12%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-end; gap: 6vh; z-index: 5; }
-    .feature-step-text { font-size: clamp(50px, 7vw, 100px); font-weight: 900; letter-spacing: .1em; opacity: 0; transform: translateY(20px); color: rgba(255,255,255,.15); line-height: 1; }
+    .feature-step-text { font-size: clamp(16px, 7vw, 100px); font-weight: 900; letter-spacing: .1em; opacity: 0; transform: translateY(20px); color: rgba(255,255,255,.15); line-height: 1; }
 
     #tech-section { background: var(--bg); }
-    .tech-intro { text-align: center; padding: 140px 28px 60px; }
-    .tech-intro .eyebrow { margin-bottom: 20px; }
-    .tech-intro h2 { font-size: clamp(52px, 7vw, 110px); line-height: 1.04; letter-spacing: -.05em; font-weight: 800; }
+    .tech-intro { text-align: center; padding: 10vw 28px 6vw; }
+    .tech-intro .eyebrow { margin-bottom: 2vw; }
+    .tech-intro h2 { font-size: clamp(20px, 7vw, 110px); line-height: 1.04; letter-spacing: -.05em; font-weight: 800; }
 
     .tech-stage {
-      position: relative; width: 100%; height: 80vh; min-height: 560px;
+      position: relative; width: 100%; height: 60vw; max-height: 80vh;
       background: radial-gradient(ellipse 65% 55% at 50% 55%, rgba(255,1,1,.07) 0%, transparent 70%);
     }
     .tech-stage model-viewer { width: 100%; height: 100%; outline: none; border: none; --poster-color: transparent; }
-    .tech-stage model-viewer:focus,
-    .tech-stage model-viewer:focus-visible { outline: none; box-shadow: none; }
+    .tech-stage model-viewer:focus, .tech-stage model-viewer:focus-visible { outline: none; box-shadow: none; }
     .tech-stage-hint {
       position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      font-size: clamp(8px, 0.8vw, 11px); letter-spacing: .2em; text-transform: uppercase;
       color: var(--dim); pointer-events: none; white-space: nowrap;
     }
 
     .tech-pillars {
       display: grid; grid-template-columns: repeat(3, 1fr);
-      padding: 80px 0 70px; gap: 0;
-      width: min(1100px, calc(100% - 80px)); margin: 0 auto;
+      padding: 6vw 0 5vw; gap: 0;
+      width: min(1100px, calc(100% - 8vw)); margin: 0 auto;
     }
-    .tech-pillar { padding: 0 40px; text-align: center; opacity: 0; transform: translateY(22px); transition: opacity .7s, transform .7s; }
+    .tech-pillar { padding: 0 3vw; text-align: center; opacity: 0; transform: translateY(22px); transition: opacity .7s, transform .7s; }
     .tech-pillar:first-child { padding-left: 0; }
     .tech-pillar:last-child  { padding-right: 0; }
     .tech-pillar.visible { opacity: 1; transform: translateY(0); }
-    .pillar-num   { font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: .22em; color: var(--accent); display: block; margin-bottom: 16px; }
-    .pillar-title { font-size: 20px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 10px; line-height: 1.3; }
-    .pillar-text  { font-size: 15px; line-height: 1.85; color: var(--muted); word-break: keep-all; letter-spacing: .01em; }
+    .pillar-num   { font-family: 'Space Grotesk', sans-serif; font-size: clamp(8px, 0.8vw, 11px); letter-spacing: .22em; color: var(--accent); display: block; margin-bottom: 1.5vw; }
+    .pillar-title { font-size: clamp(12px, 1.4vw, 20px); font-weight: 700; letter-spacing: -.01em; margin-bottom: 1vw; line-height: 1.3; }
+    .pillar-text  { font-size: clamp(10px, 1vw, 15px); line-height: 1.85; color: var(--muted); word-break: keep-all; letter-spacing: .01em; }
 
     .ts-real { position: relative; overflow: hidden; background: #000; }
     .ts-real img {
@@ -241,236 +247,150 @@
     .ts-real img.loaded { opacity: 1; transform: scale(1); }
     .ts-real:hover img.loaded { transform: scale(1.055); }
 
-    .ts-sub {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px; font-weight: 500; letter-spacing: .24em;
-      text-transform: uppercase; color: #aaa; display: block; margin-bottom: 18px;
-    }
-
+    .ts-sub { font-family: 'Space Grotesk', sans-serif; font-size: clamp(8px, 0.8vw, 11px); font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: #aaa; display: block; margin-bottom: 1.5vw; }
     .ts-a, .ts-b, .ts-c { background: #fff; color: #111; }
 
-    .ts-a { display: grid; grid-template-columns: 36fr 64fr; min-height: 640px; }
-    .ts-a-left { display: flex; flex-direction: column; padding: 72px 40px 60px min(80px, 6vw); }
-    .ts-a-left h3 { font-size: clamp(26px, 2.8vw, 44px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; margin-bottom: 16px; color: #111; word-break: keep-all; }
+    .ts-a { display: grid; grid-template-columns: 36fr 64fr; min-height: 45vw; }
+    .ts-a-left { display: flex; flex-direction: column; padding: 5vw 3vw 4vw min(80px, 6vw); }
+    .ts-a-left h3 { font-size: clamp(14px, 2.8vw, 44px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; margin-bottom: 1.5vw; color: #111; word-break: keep-all; }
     .ts-a-left h3 em { font-style: normal; color: var(--accent); }
-    .ts-a-left p { font-size: 15px; line-height: 1.9; color: #666; max-width: 300px; word-break: keep-all; letter-spacing: .01em; }
-    .ts-a-smalls { display: grid; grid-template-columns: 1fr 1fr; flex: 1; margin-top: 36px; gap: 4px; }
-    .ts-a-small { min-height: 200px; }
+    .ts-a-left p { font-size: clamp(10px, 1vw, 15px); line-height: 1.9; color: #666; max-width: 300px; word-break: keep-all; letter-spacing: .01em; }
+    .ts-a-smalls { display: grid; grid-template-columns: 1fr 1fr; flex: 1; margin-top: 3vw; gap: 4px; }
 
-    .ts-b { display: grid; grid-template-columns: 55fr 45fr; min-height: 580px; }
+    .ts-b { display: grid; grid-template-columns: 55fr 45fr; min-height: 40vw; }
     .ts-b-right { display: flex; flex-direction: column; background: #fff; }
     .ts-b-small { height: 46%; }
-    .ts-b-text { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 48px 60px 48px 52px; }
-    .ts-b-text h3 { font-size: clamp(26px, 2.8vw, 44px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; margin-bottom: 16px; color: #111; word-break: keep-all; }
+    .ts-b-text { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4vw 4.5vw 4vw 4vw; }
+    .ts-b-text h3 { font-size: clamp(14px, 2.8vw, 44px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; margin-bottom: 1.5vw; color: #111; word-break: keep-all; }
     .ts-b-text h3 em { font-style: normal; color: var(--accent); }
-    .ts-b-text p { font-size: 15px; line-height: 1.9; color: #666; word-break: keep-all; letter-spacing: .01em; }
+    .ts-b-text p { font-size: clamp(10px, 1vw, 15px); line-height: 1.9; color: #666; word-break: keep-all; letter-spacing: .01em; }
 
-    .ts-c-meta  { padding: 72px min(80px, 6vw) 32px; background: #fff; }
+    .ts-c-meta  { padding: 5vw min(80px, 6vw) 2.5vw; background: #fff; }
     .ts-c-stage { position: relative; background: #fff; overflow: hidden; }
     .ts-c-img-wrap { position: relative; width: 100%; }
-    @keyframes engineBreathe {
-      0%, 100% { transform: scale(1); }
-      50%       { transform: scale(1.012); }
-    }
+    @keyframes engineBreathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.012); } }
     .ts-c-img-wrap > img { width: 100%; height: auto; display: block; animation: engineBreathe 10s ease-in-out infinite; }
 
     .anno { position: absolute; display: flex; align-items: center; pointer-events: none; left: var(--x); top: var(--y); z-index: 5; }
     .anno.R { flex-direction: row;  transform: translate(0, -50%); }
     .anno.L { flex-direction: row;  transform: translate(-100%, -50%); }
-    .anno-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 0 3px rgba(255,1,1,.22), 0 0 14px rgba(255,1,1,.3); }
+    .anno-dot { width: clamp(4px, 0.6vw, 9px); height: clamp(4px, 0.6vw, 9px); border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 0 3px rgba(255,1,1,.22), 0 0 14px rgba(255,1,1,.3); }
     .anno-line { width: var(--w, 120px); height: 2px; background: rgba(0,0,0,.35); flex-shrink: 0; }
     .anno-label { display: flex; flex-direction: column; line-height: 1; }
-    .anno.R .anno-label { align-items: flex-start; padding-left: 14px; }
-    .anno.L .anno-label { align-items: flex-end; text-align: right; padding-right: 14px; }
-    .anno-val { font-family: 'SUIT', sans-serif; font-size: clamp(14px, 1.4vw, 21px); font-weight: 700; line-height: 1; letter-spacing: -.03em; color: #111; white-space: nowrap; }
-    .anno-sub { font-family: 'SUIT', sans-serif; font-size: clamp(10px, .75vw, 12px); font-weight: 500; color: #888; margin-top: 6px; white-space: nowrap; }
+    .anno.R .anno-label { align-items: flex-start; padding-left: 1vw; }
+    .anno.L .anno-label { align-items: flex-end; text-align: right; padding-right: 1vw; }
+    .anno-val { font-family: 'SUIT', sans-serif; font-size: clamp(10px, 1.4vw, 21px); font-weight: 700; line-height: 1; letter-spacing: -.03em; color: #111; white-space: nowrap; }
+    .anno-sub { font-family: 'SUIT', sans-serif; font-size: clamp(7px, .75vw, 12px); font-weight: 500; color: #888; margin-top: 0.5vw; white-space: nowrap; }
 
     #specs-section { background: var(--bg2); }
+    .specs-header { padding: 8vw min(80px, 6vw) 5vw; }
+    .specs-header h2 { font-size: clamp(24px, 6.5vw, 100px); line-height: 1.05; letter-spacing: -.05em; font-weight: 800; }
+    .specs-header h2 .eyebrow { margin-bottom: 2vw; display: block; }
 
-    .specs-header {
-      padding: 120px min(80px, 6vw) 70px;
-    }
-    .specs-header h2 { font-size: clamp(48px, 6.5vw, 100px); line-height: 1.05; letter-spacing: -.05em; font-weight: 800; }
-    .specs-header h2 .eyebrow { margin-bottom: 20px; display: block; }
-
-    .specs-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; padding: 0 min(80px,6vw) 80px; }
-    .stat-block { text-align: left; padding-right: 20px; opacity: 0; transform: translateY(16px); transition: opacity .6s, transform .6s; }
+    .specs-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; padding: 0 min(80px,6vw) 6vw; }
+    .stat-block { text-align: left; padding-right: 2vw; opacity: 0; transform: translateY(16px); transition: opacity .6s, transform .6s; }
     .stat-block:last-child { padding-right: 0; }
     .stat-block.visible { opacity: 1; transform: translateY(0); }
-    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: clamp(48px, 5.5vw, 90px); font-weight: 700; line-height: 1; letter-spacing: -.04em; }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: clamp(20px, 5.5vw, 90px); font-weight: 700; line-height: 1; letter-spacing: -.04em; }
     .stat-num sup { font-size: .42em; vertical-align: top; margin-top: .2em; color: var(--accent); }
-    .stat-label { display: block; margin-top: 10px; font-size: 13px; color: var(--dim); }
+    .stat-label { display: block; margin-top: 1vw; font-size: clamp(9px, 1vw, 13px); color: var(--dim); }
 
-    .specs-exploded {
-      position: relative; width: 100%;
-      aspect-ratio: 21 / 9;
-      overflow: hidden; background: #0a0a0a;
-    }
-    .specs-exploded img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      opacity: 0; transform: scale(1.03);
-      transition: opacity 1.4s ease, transform 2.2s cubic-bezier(.25,.46,.45,.94);
-    }
+    .specs-exploded { position: relative; width: 100%; aspect-ratio: 21 / 9; overflow: hidden; background: #0a0a0a; }
+    .specs-exploded img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transform: scale(1.03); transition: opacity 1.4s ease, transform 2.2s cubic-bezier(.25,.46,.45,.94); }
     .specs-exploded img.loaded { opacity: 1; transform: scale(1); }
 
-    .specs-table { display: grid; grid-template-columns: repeat(4, 1fr); padding: 60px min(80px, 6vw) 100px; }
-    .spec-col { padding-right: 32px; }
+    .specs-table { display: grid; grid-template-columns: repeat(4, 1fr); padding: 5vw min(80px, 6vw) 7vw; }
+    .spec-col { padding-right: 2vw; }
     .spec-col:last-child { padding-right: 0; }
-    .spec-col-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(36px,4vw,60px); font-weight: 800; letter-spacing: -.03em;
-      color: var(--accent); margin-bottom: 28px; display: block; line-height: 1.15;
-    }
-    .spec-row { padding: 12px 0; }
-    .spec-row dt { font-size: 14px; color: var(--dim); margin-bottom: 5px; letter-spacing: .02em; }
-    .spec-row dd { font-size: 20px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
+    .spec-col-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(16px, 4vw, 60px); font-weight: 800; letter-spacing: -.03em; color: var(--accent); margin-bottom: 2vw; display: block; line-height: 1.15; }
+    .spec-row { padding: 1vw 0; }
+    .spec-row dt { font-size: clamp(9px, 1vw, 14px); color: var(--dim); margin-bottom: 0.5vw; letter-spacing: .02em; }
+    .spec-row dd { font-size: clamp(11px, 1.4vw, 20px); font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
 
     #reviews-section { background: #0b0d1a; }
+    .reviews-header { padding: 8vw min(80px, 6vw) 6vw; text-align: center; }
+    .reviews-header .eyebrow { margin-bottom: 2vw; display: block; }
+    .reviews-header h2 { font-size: clamp(24px, 7vw, 100px); line-height: 1; letter-spacing: -.03em; font-weight: 800; white-space: nowrap; display: inline-block; }
 
-    .reviews-header { padding: 120px min(80px, 6vw) 80px; text-align: center; }
-    .reviews-header .eyebrow { margin-bottom: 20px; display: block; }
-    .reviews-header h2 {
-      font-size: clamp(60px, 7vw, 100px);
-      line-height: 1; letter-spacing: -.03em; font-weight: 800;
-      white-space: nowrap; display: inline-block;
-    }
-
-    .rv-img {
-      position: relative; overflow: hidden; background: #111;
-    }
-
-    .rv-img img {
-      position: absolute; left: 0; width: 100%;
-      top: -8%; height: 116%;
-      object-fit: cover;
-      opacity: 0; transition: opacity 1s ease;
-      will-change: transform;
-    }
+    .rv-img { position: relative; overflow: hidden; background: #111; }
+    .rv-img img { position: absolute; left: 0; width: 100%; top: -8%; height: 116%; object-fit: cover; opacity: 0; transition: opacity 1s ease; will-change: transform; }
     .rv-img img.loaded { opacity: 1; }
 
-    .rv-quote {
-      font-weight: 700; line-height: 1.6; word-break: keep-all; letter-spacing: -.01em;
-      color: var(--text);
-      font-size: clamp(22px, 2.2vw, 34px);
-    }
-
+    .rv-quote { font-weight: 700; line-height: 1.6; word-break: keep-all; letter-spacing: -.01em; color: var(--text); font-size: clamp(12px, 2.2vw, 34px); }
     .rv-rh { color: var(--accent); }
 
-    .rv-num {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 800; line-height: .88;
-      letter-spacing: .04em;
-      color: transparent;
-      -webkit-text-stroke: 2px rgba(255,1,1,.7);
-      display: block; flex-shrink: 0;
-    }
-
-    #rv-student  .rv-num,
-    #rv-tourist  .rv-num { -webkit-text-stroke-width: 3px; }
-
-    #rv-courier     .rv-num { font-size: clamp(90px,  12vw, 175px); }
-    #rv-employee    .rv-num { font-size: clamp(140px, 17vw, 250px); }
-    #rv-fieldworker .rv-num { font-size: clamp(110px, 14vw, 205px); }
-    #rv-student     .rv-num { font-size: clamp(90px, 11vw, 160px); }
-    #rv-tourist     .rv-num { font-size: clamp(175px, 22vw, 340px); }
+    .rv-num { font-family: 'Space Grotesk', sans-serif; font-weight: 800; line-height: .88; letter-spacing: .04em; color: transparent; -webkit-text-stroke: 2px rgba(255,1,1,.7); display: block; flex-shrink: 0; }
+    #rv-student .rv-num, #rv-tourist .rv-num { -webkit-text-stroke-width: clamp(1px, 0.2vw, 3px); }
+    #rv-courier     .rv-num { font-size: clamp(30px,  12vw, 175px); }
+    #rv-employee    .rv-num { font-size: clamp(40px, 17vw, 250px); }
+    #rv-fieldworker .rv-num { font-size: clamp(35px,  14vw, 205px); }
+    #rv-student     .rv-num { font-size: clamp(30px,  11vw, 160px); }
+    #rv-tourist     .rv-num { font-size: clamp(50px, 22vw, 340px); }
 
     .rv-block { will-change: transform, opacity; }
 
-    .rv-1 { padding-bottom: 48px; }
+    .rv-1 { padding-bottom: 4vw; }
     .rv-1 .rv-img { width: 100%; aspect-ratio: 16 / 9; }
-    .rv-1 .rv-below {
-      display: flex; align-items: center; gap: 0;
-      padding: 20px min(80px, 6vw) 0;
-    }
-    .rv-1 .rv-num { margin-right: 48px; flex-shrink: 0; }
-    .rv-1 .rv-quote { font-size: clamp(24px, 2.4vw, 38px); flex: 1; }
+    .rv-1 .rv-below { display: flex; align-items: center; gap: 0; padding: 2vw min(80px, 6vw) 0; }
+    .rv-1 .rv-num { margin-right: 4vw; flex-shrink: 0; }
+    .rv-1 .rv-quote { font-size: clamp(14px, 2.4vw, 38px); flex: 1; }
 
-    .rv-2 {
-      display: grid; grid-template-columns: 42fr 58fr;
-      align-items: stretch; padding-bottom: 48px;
-    }
-    .rv-2 .rv-text {
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: 32px 40px 44px min(80px, 6vw);
-    }
+    .rv-2 { display: grid; grid-template-columns: 42fr 58fr; align-items: stretch; padding-bottom: 4vw; }
+    .rv-2 .rv-text { display: flex; flex-direction: column; justify-content: space-between; padding: 3vw 3vw 3.5vw min(80px, 6vw); }
     .rv-2 .rv-img { aspect-ratio: 4 / 3; }
 
-    .rv-3 {
-      display: grid; grid-template-columns: 62fr 38fr;
-      align-items: stretch; padding-bottom: 48px;
-    }
-    .rv-3 .rv-text {
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: 32px min(80px, 6vw) 44px 44px;
-    }
+    .rv-3 { display: grid; grid-template-columns: 62fr 38fr; align-items: stretch; padding-bottom: 4vw; }
+    .rv-3 .rv-text { display: flex; flex-direction: column; justify-content: space-between; padding: 3vw min(80px, 6vw) 3.5vw 3.5vw; }
     .rv-3 .rv-img { aspect-ratio: 3 / 2; }
 
-    .rv-4 {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 0 min(80px, 6vw) 48px;
-    }
+    .rv-4 { display: flex; flex-direction: column; align-items: center; padding: 0 min(80px, 6vw) 4vw; }
     .rv-4 .rv-img { width: 58%; aspect-ratio: 5 / 4; }
-    .rv-4 .rv-below {
-      width: 58%;
-      display: flex; align-items: center; gap: 0;
-      padding-top: 20px;
-    }
-    .rv-4 .rv-num { margin-right: 40px; flex-shrink: 0; }
-    .rv-4 .rv-quote { flex: 1; text-align: right; font-size: clamp(19px, 1.9vw, 28px); line-height: 1.65; }
+    .rv-4 .rv-below { width: 58%; display: flex; align-items: center; gap: 0; padding-top: 2vw; }
+    .rv-4 .rv-num { margin-right: 3vw; flex-shrink: 0; }
+    .rv-4 .rv-quote { flex: 1; text-align: right; font-size: clamp(10px, 1.9vw, 28px); line-height: 1.65; }
 
-    .rv-5 {
-      display: grid; grid-template-columns: 50fr 50fr;
-      align-items: stretch; padding-bottom: 100px;
-    }
-    .rv-5 .rv-text {
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: 32px 40px 44px min(80px, 6vw);
-    }
+    .rv-5 { display: grid; grid-template-columns: 50fr 50fr; align-items: stretch; padding-bottom: 8vw; }
+    .rv-5 .rv-text { display: flex; flex-direction: column; justify-content: space-between; padding: 3vw 3vw 3.5vw min(80px, 6vw); }
     .rv-5 .rv-quote { line-height: 1.6; }
     .rv-5 .rv-img { aspect-ratio: 4 / 5; }
 
     #purchase-section { background: #060606; }
     .purchase-grid { display: grid; grid-template-columns: 52fr 48fr; min-height: 100vh; }
     .purchase-img { position: relative; overflow: hidden; background: #0a0a0a; }
-    .purchase-img::after {
-      content: ""; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,1,1,.06) 0%, transparent 65%);
-      pointer-events: none; z-index: 1;
-    }
+    .purchase-img::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,1,1,.06) 0%, transparent 65%); pointer-events: none; z-index: 1; }
     .purchase-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .purchase-info { display: flex; flex-direction: column; justify-content: center; padding: 80px min(80px, 6vw) 80px 72px; }
-    .purchase-info .eyebrow { margin-bottom: 28px; }
-    .purchase-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(72px, 9vw, 140px); font-weight: 700; line-height: .95; letter-spacing: -.04em; margin-bottom: 8px; }
-    .purchase-subtitle { font-size: 18px; color: var(--muted); letter-spacing: .04em; margin-bottom: 52px; }
-    .purchase-price { margin-bottom: 40px; }
-    .purchase-price-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
-    .purchase-price-num { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 3.5vw, 52px); font-weight: 700; letter-spacing: -.03em; color: var(--text); }
-    .purchase-includes { list-style: none; margin-bottom: 48px; display: flex; flex-direction: column; gap: 12px; }
-    .purchase-includes li { font-size: 16px; color: var(--muted); padding-left: 18px; position: relative; }
-    .purchase-includes li::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 5px; height: 1px; background: var(--accent); }
-    .purchase-cta { display: block; background: var(--accent); color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .06em; text-transform: uppercase; text-align: center; padding: 20px 40px; cursor: pointer; margin-bottom: 16px; transition: background .2s, transform .15s; }
+    .purchase-info { display: flex; flex-direction: column; justify-content: center; padding: 6vw min(80px, 6vw) 6vw 5vw; }
+    .purchase-info .eyebrow { margin-bottom: 2vw; }
+    .purchase-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(30px, 9vw, 140px); font-weight: 700; line-height: .95; letter-spacing: -.04em; margin-bottom: 1vw; }
+    .purchase-subtitle { font-size: clamp(10px, 1.2vw, 18px); color: var(--muted); letter-spacing: .04em; margin-bottom: 4vw; }
+    .purchase-price { margin-bottom: 3vw; }
+    .purchase-price-num { font-family: 'Space Grotesk', sans-serif; font-size: clamp(14px, 3.5vw, 52px); font-weight: 700; letter-spacing: -.03em; color: var(--text); }
+    .purchase-includes { list-style: none; margin-bottom: 4vw; display: flex; flex-direction: column; gap: 1vw; }
+    .purchase-includes li { font-size: clamp(10px, 1.1vw, 16px); color: var(--muted); padding-left: 1.5vw; position: relative; }
+    .purchase-includes li::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 0.4vw; height: 1px; background: var(--accent); }
+    .purchase-cta { display: block; background: var(--accent); color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(10px, 1.2vw, 17px); letter-spacing: .06em; text-transform: uppercase; text-align: center; padding: 1.5vw 3vw; cursor: pointer; margin-bottom: 1vw; transition: background .2s, transform .15s; }
     .purchase-cta:hover { background: #e00000; transform: translateY(-1px); }
-    .purchase-secondary { display: block; text-align: center; font-size: 15px; color: var(--muted); padding: 12px; border: 1px solid rgba(255,255,255,.1); transition: border-color .2s, color .2s; }
+    .purchase-secondary { display: block; text-align: center; font-size: clamp(10px, 1vw, 15px); color: var(--muted); padding: 1vw; border: 1px solid rgba(255,255,255,.1); transition: border-color .2s, color .2s; }
     .purchase-secondary:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
 
     #footer-section { background: var(--bg2); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-    .footer-inner { width: min(1280px, calc(100% - 56px)); margin: 0 auto; padding: 120px 0 60px; }
-    .footer-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 80px; padding-bottom: 80px; }
-    .footer-brand-block .eyebrow { margin-bottom: 20px; display: block; }
-    .footer-brand { font-size: clamp(26px, 2.2vw, 40px); line-height: 1.1; letter-spacing: -.04em; font-weight: 800; margin-bottom: 24px; }
+    .footer-inner { width: min(1280px, calc(100% - 6vw)); margin: 0 auto; padding: 8vw 0 4vw; }
+    .footer-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6vw; padding-bottom: 6vw; }
+    .footer-brand-block .eyebrow { margin-bottom: 1.5vw; display: block; }
+    .footer-brand { font-size: clamp(12px, 2.2vw, 40px); line-height: 1.1; letter-spacing: -.04em; font-weight: 800; margin-bottom: 1.5vw; }
     .footer-brand em { font-style: normal; color: var(--accent); }
-    .footer-about-text { font-size: 16px; line-height: 1.9; color: var(--muted); word-break: keep-all; }
-    .footer-col-title { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); margin-bottom: 28px; display: block; }
-    .footer-info-stack { display: flex; flex-direction: column; gap: 22px; }
-    .footer-info-key { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 5px; }
-    .footer-info-val     { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,.8); }
-    .footer-info-val.sub { font-size: 14px; color: var(--muted); }
-    .footer-social { display: flex; flex-wrap: wrap; gap: 14px; }
-    .footer-social a { font-size: 14px; color: var(--muted); transition: color .2s; }
+    .footer-about-text { font-size: clamp(10px, 1.1vw, 16px); line-height: 1.9; color: var(--muted); word-break: keep-all; }
+    .footer-col-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(7px, 0.8vw, 10px); letter-spacing: .22em; text-transform: uppercase; color: var(--dim); margin-bottom: 2vw; display: block; }
+    .footer-info-stack { display: flex; flex-direction: column; gap: 1.5vw; }
+    .footer-info-key { font-family: 'Space Grotesk', sans-serif; font-size: clamp(7px, 0.8vw, 10px); letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 0.4vw; }
+    .footer-info-val     { font-size: clamp(10px, 1vw, 15px); line-height: 1.7; color: rgba(255,255,255,.8); }
+    .footer-info-val.sub { font-size: clamp(9px, 0.9vw, 14px); color: var(--muted); }
+    .footer-social { display: flex; flex-wrap: wrap; gap: 1vw; }
+    .footer-social a { font-size: clamp(9px, 1vw, 14px); color: var(--muted); transition: color .2s; }
     .footer-social a:hover { color: var(--text); }
-    .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.06); }
-    .footer-copy { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: rgba(255,255,255,.28); }
-    .footer-links { display: flex; align-items: center; gap: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: rgba(255,255,255,.42); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 1.5vw; padding-top: 2vw; border-top: 1px solid rgba(255,255,255,.06); }
+    .footer-copy { font-family: 'Space Grotesk', sans-serif; font-size: clamp(8px, 0.9vw, 12px); color: rgba(255,255,255,.28); }
+    .footer-links { display: flex; align-items: center; gap: 1vw; font-family: 'Space Grotesk', sans-serif; font-size: clamp(8px, 0.9vw, 12px); color: rgba(255,255,255,.42); }
     .footer-links span { opacity: .3; }
   </style>
 </head>
@@ -502,8 +422,7 @@
 
   <main id="main">
 
-    <!-- HERO -->
-    <section id="intro-section" class="hero section">
+    <section id="intro-section" class="hero">
       <video autoplay muted loop playsinline>
         <source src="video 1.mp4" type="video/mp4">
       </video>
@@ -516,8 +435,7 @@
       </div>
     </section>
 
-    <!-- WHY US -->
-    <section id="whyus-section" class="whyus section">
+    <section id="whyus-section" class="whyus">
       <div class="whyus-bg"></div>
       <div class="reveal-layer" id="revealLayer"></div>
       <div class="whyus-inner">
@@ -531,8 +449,7 @@
       </div>
     </section>
 
-    <!-- FEATURES -->
-    <section id="features-section" class="section">
+    <section id="features-section">
       <div id="features-viewport">
         <div class="building-bg"></div>
         <div class="feature-panel feature-panel-1">
@@ -554,26 +471,15 @@
       </div>
     </section>
 
-    <!-- TECH & MATERIALS -->
-    <section id="tech-section" class="section">
-
+    <section id="tech-section">
       <div class="tech-intro sr">
         <p class="eyebrow">Tech &amp; Materials</p>
         <h2>도시를 가로지르는<br><span style="color:var(--accent)">핵심</span> 메커니즘</h2>
       </div>
-
       <div class="tech-stage">
-        <model-viewer
-          src="3d.glb" alt="AXIS 3D Model"
-          auto-rotate camera-controls
-          shadow-intensity="1.2" exposure="1.3"
-          interaction-prompt="none" bounds="tight"
-          min-camera-orbit="auto auto 5%"
-          max-camera-orbit="auto auto 200%">
-        </model-viewer>
+        <model-viewer src="3d.glb" alt="AXIS 3D Model" auto-rotate camera-controls shadow-intensity="1.2" exposure="1.3" interaction-prompt="none" bounds="tight" min-camera-orbit="auto auto 5%" max-camera-orbit="auto auto 200%"></model-viewer>
         <p class="tech-stage-hint">드래그하여 회전 &nbsp;·&nbsp; 스크롤하여 확대</p>
       </div>
-
       <div class="tech-pillars">
         <div class="tech-pillar">
           <span class="pillar-num">01</span>
@@ -591,8 +497,6 @@
           <p class="pillar-text">하중 변화를 즉시 계산해 안정적인 속도를 유지</p>
         </div>
       </div>
-
-      <!-- Story A · Cable System -->
       <div class="ts-a">
         <div class="ts-a-left sr">
           <span class="ts-sub">01 · Cable System</span>
@@ -603,20 +507,12 @@
             <div class="ts-a-small ts-real"><img src="anchor.png" alt="cable terminal"></div>
           </div>
         </div>
-        <div class="ts-a-hero ts-real">
-          <img src="cable anchor.png" alt="cable closeup">
-        </div>
+        <div class="ts-a-hero ts-real"><img src="cable anchor.png" alt="cable closeup"></div>
       </div>
-
-      <!-- Story B · Anchor System -->
       <div class="ts-b">
-        <div class="ts-b-img ts-real">
-          <img src="attached to the building.png" alt="anchor on building">
-        </div>
+        <div class="ts-b-img ts-real"><img src="attached to the building.png" alt="anchor on building"></div>
         <div class="ts-b-right">
-          <div class="ts-b-small ts-real">
-            <img src="stuck to the glass.png" alt="surface attachment">
-          </div>
+          <div class="ts-b-small ts-real"><img src="stuck to the glass.png" alt="surface attachment"></div>
           <div class="ts-b-text sr">
             <span class="ts-sub">02 · Anchor System</span>
             <h3><em>이중 고정</em><br>진공 + 마찰</h3>
@@ -624,88 +520,48 @@
           </div>
         </div>
       </div>
-
-      <!-- Story C · Engine System -->
       <div class="ts-c">
-        <div class="ts-c-meta sr">
-          <span class="ts-sub">03 · Engine System</span>
-        </div>
+        <div class="ts-c-meta sr"><span class="ts-sub">03 · Engine System</span></div>
         <div class="ts-c-stage">
           <div class="ts-c-img-wrap">
             <img src="engine.png" alt="AXIS drive engine cutaway">
-            <div class="anno L" style="--x:40%; --y:33%; --w:22vw;">
-              <div class="anno-label">
-                <span class="anno-val">실시간 온도 모니터</span>
-                <span class="anno-sub">시스템 발열 상태 실시간 추적</span>
-              </div>
-              <div class="anno-line"></div>
-              <div class="anno-dot"></div>
+            <div class="anno L" style="--x:40%;--y:33%;--w:22vw;">
+              <div class="anno-label"><span class="anno-val">실시간 온도 모니터</span><span class="anno-sub">시스템 발열 상태 실시간 추적</span></div>
+              <div class="anno-line"></div><div class="anno-dot"></div>
             </div>
-            <div class="anno L" style="--x:45%; --y:53%; --w:22vw;">
-              <div class="anno-label">
-                <span class="anno-val">쿨링 터빈 유닛</span>
-                <span class="anno-sub">공기역학적 초고속 방열 구조</span>
-              </div>
-              <div class="anno-line"></div>
-              <div class="anno-dot"></div>
+            <div class="anno L" style="--x:45%;--y:53%;--w:22vw;">
+              <div class="anno-label"><span class="anno-val">쿨링 터빈 유닛</span><span class="anno-sub">공기역학적 초고속 방열 구조</span></div>
+              <div class="anno-line"></div><div class="anno-dot"></div>
             </div>
-            <div class="anno R" style="--x:54%; --y:50%; --w:22vw;">
-              <div class="anno-dot"></div>
-              <div class="anno-line"></div>
-              <div class="anno-label">
-                <span class="anno-val">스테이터 코일 시스템</span>
-                <span class="anno-sub">고밀도 전자기장 구동부 형성</span>
-              </div>
+            <div class="anno R" style="--x:54%;--y:50%;--w:22vw;">
+              <div class="anno-dot"></div><div class="anno-line"></div>
+              <div class="anno-label"><span class="anno-val">스테이터 코일 시스템</span><span class="anno-sub">고밀도 전자기장 구동부 형성</span></div>
             </div>
-            <div class="anno R" style="--x:51%; --y:73%; --w:26vw;">
-              <div class="anno-dot"></div>
-              <div class="anno-line"></div>
-              <div class="anno-label">
-                <span class="anno-val">냉각 배관</span>
-                <span class="anno-sub">특수 냉매 고속 순환 채널</span>
-              </div>
+            <div class="anno R" style="--x:51%;--y:73%;--w:26vw;">
+              <div class="anno-dot"></div><div class="anno-line"></div>
+              <div class="anno-label"><span class="anno-val">냉각 배관</span><span class="anno-sub">특수 냉매 고속 순환 채널</span></div>
             </div>
           </div>
         </div>
       </div>
-
     </section>
 
-    <!-- ══ SPECS ══ -->
-    <section id="specs-section" class="section">
-
+    <section id="specs-section">
       <div class="specs-header sr">
         <h2>
           <span class="eyebrow">Specs</span>
           <span style="color:var(--accent)">가장</span> 작지만<br><span style="color:var(--accent)">가장</span> 빠른 장치
         </h2>
       </div>
-
       <div class="specs-stats">
-        <div class="stat-block">
-          <p class="stat-num">3.5<sup>kg</sup></p>
-          <span class="stat-label">본체 중량</span>
-        </div>
-        <div class="stat-block" style="transition-delay:.08s">
-          <p class="stat-num">120<sup>kg</sup></p>
-          <span class="stat-label">최대 하중</span>
-        </div>
-        <div class="stat-block" style="transition-delay:.16s">
-          <p class="stat-num">30<sup>m</sup></p>
-          <span class="stat-label">최대 이동 거리</span>
-        </div>
-        <div class="stat-block" style="transition-delay:.24s">
-          <p class="stat-num">480<sup>W</sup></p>
-          <span class="stat-label">최대 출력</span>
-        </div>
+        <div class="stat-block"><p class="stat-num">3.5<sup>kg</sup></p><span class="stat-label">본체 중량</span></div>
+        <div class="stat-block" style="transition-delay:.08s"><p class="stat-num">120<sup>kg</sup></p><span class="stat-label">최대 하중</span></div>
+        <div class="stat-block" style="transition-delay:.16s"><p class="stat-num">30<sup>m</sup></p><span class="stat-label">최대 이동 거리</span></div>
+        <div class="stat-block" style="transition-delay:.24s"><p class="stat-num">480<sup>W</sup></p><span class="stat-label">최대 출력</span></div>
       </div>
-
-      <!-- 21:9 exploded view image -->
       <div class="specs-exploded">
         <img src="exploded view.png" alt="AXIS exploded view" id="specsExplodedImg">
       </div>
-
-      <!-- Spec detail table -->
       <div class="specs-table sr">
         <div class="spec-col">
           <span class="spec-col-title">기본<br>사양</span>
@@ -740,86 +596,58 @@
           </dl>
         </div>
       </div>
-
     </section>
 
-    <!-- ══ REVIEWS ══ -->
-    <section id="reviews-section" class="section">
-
+    <section id="reviews-section">
       <div class="reviews-header sr">
         <span class="eyebrow">Reviews</span>
         <h2>이동의 <span style="color:var(--accent)">변화</span>, 결과의 <span style="color:var(--accent)">차이</span></h2>
       </div>
-
-      <!-- 1: courier 16:9 — full width, number+quote inline below -->
       <div class="rv-block rv-1" id="rv-courier">
-        <div class="rv-img">
-          <img src="courier.png" alt="courier">
-        </div>
+        <div class="rv-img"><img src="courier.png" alt="courier"></div>
         <div class="rv-below">
           <span class="rv-num">01</span>
           <p class="rv-quote">"층마다 오르내릴 필요가 없으니까 <span class="rv-rh">배달 속도가 완전히</span> 달라졌어요."</p>
         </div>
       </div>
-
-      <!-- 2: employee 4:3 — number top / quote bottom / image right -->
       <div class="rv-block rv-2" id="rv-employee">
         <div class="rv-text">
           <span class="rv-num">02</span>
           <p class="rv-quote">"처음엔 반신반의했는데, 쓰고 나서는 <span class="rv-rh">진짜 출근 시간이 줄었어요.</span>"</p>
         </div>
-        <div class="rv-img">
-          <img src="employee.png" alt="employee">
-        </div>
+        <div class="rv-img"><img src="employee.png" alt="employee"></div>
       </div>
-
-      <!-- 3: field worker 3:2 — image left / number top + quote bottom -->
       <div class="rv-block rv-3" id="rv-fieldworker">
-        <div class="rv-img">
-          <img src="field worker.png" alt="field worker">
-        </div>
+        <div class="rv-img"><img src="field worker.png" alt="field worker"></div>
         <div class="rv-text">
           <span class="rv-num">03</span>
           <p class="rv-quote">"<span class="rv-rh">현장 이동 스트레스가 확 줄었어요.</span> 생각보다 훨씬 쓸만해요."</p>
         </div>
       </div>
-
-      <!-- 4: student 5:4 — centered image, number+quote inline below -->
       <div class="rv-block rv-4" id="rv-student">
-        <div class="rv-img">
-          <img src="student.png" alt="student">
-        </div>
+        <div class="rv-img"><img src="student.png" alt="student"></div>
         <div class="rv-below">
           <span class="rv-num">04</span>
-          <p class="rv-quote">"지각할 것 같으면 그냥 AXIS 타면 되더라고요 ㅋㅋ <span class="rv-rh">진짜 편해요.</span>"</p>
+          <p class="rv-quote">"지각할 것 같으면 그냥 AXIS 켜면 되더라고요 ㅋㅋ <span class="rv-rh">진짜 편해요.</span>"</p>
         </div>
       </div>
-
-      <!-- 5: tourist 4:5 — number top + big quote / portrait right -->
       <div class="rv-block rv-5" id="rv-tourist">
         <div class="rv-text">
           <span class="rv-num">05</span>
           <p class="rv-quote">"서울 도심을 <span class="rv-rh">완전히 새로운 시각으로</span> 즐겼어요. 경험 자체가 달랐습니다."</p>
         </div>
-        <div class="rv-img">
-          <img src="Tourist.png" alt="tourist">
-        </div>
+        <div class="rv-img"><img src="Tourist.png" alt="tourist"></div>
       </div>
-
     </section>
 
-    <!-- PURCHASE -->
-    <section id="purchase-section" class="section">
+    <section id="purchase-section">
       <div class="purchase-grid">
-        <div class="purchase-img">
-          <img src="main image.png" alt="AXIS main product">
-        </div>
+        <div class="purchase-img"><img src="main image.png" alt="AXIS main product"></div>
         <div class="purchase-info sr">
           <p class="eyebrow">Order</p>
           <h2 class="purchase-title">AXIS</h2>
           <p class="purchase-subtitle">Urban Traversal System</p>
           <div class="purchase-price">
-           
             <p class="purchase-price-num">₩ 2 2 1 , 0 1 7 , 6 9 0</p>
           </div>
           <ul class="purchase-includes">
@@ -834,18 +662,13 @@
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <section id="footer-section" class="section">
+    <section id="footer-section">
       <div class="footer-inner">
         <div class="footer-top">
           <div class="footer-brand-block">
             <span class="eyebrow">About Us</span>
             <h2 class="footer-brand" style="margin-top:20px">AXIS<br><em>Urban Traversal</em><br>System</h2>
-            <p class="footer-about-text">
-              도시 이동의 흐름을 전환하는 차세대 퍼스널 모빌리티 시스템이다.
-              기존의 물리적 한계를 넘어 새로운 축(AXIS)을 세워
-              가장 직접적인 이동 경로를 설계한다.
-            </p>
+            <p class="footer-about-text">도시 이동의 흐름을 전환하는 차세대 퍼스널 모빌리티 시스템이다. 기존의 물리적 한계를 넘어 새로운 축(AXIS)을 세워 가장 직접적인 이동 경로를 설계한다.</p>
           </div>
           <div>
             <span class="footer-col-title">Information</span>
@@ -862,22 +685,14 @@
               <div><p class="footer-info-key">Inquiry</p><p class="footer-info-val"><a href="mailto:axis@gmail.com">axis@gmail.com</a></p></div>
               <div><p class="footer-info-key">Support</p><p class="footer-info-val"><a href="tel:+820212345678">+82 (0)2 1234 5678</a></p></div>
               <div><p class="footer-info-key">Social</p>
-                <div class="footer-social">
-                  <a href="#">Instagram</a>
-                  <a href="#">Facebook</a>
-                  <a href="#">Thread</a>
-                </div>
+                <div class="footer-social"><a href="#">Instagram</a><a href="#">Facebook</a><a href="#">Thread</a></div>
               </div>
             </div>
           </div>
         </div>
         <div class="footer-bottom">
           <p class="footer-copy">© 2026 AXIS Urban Traversal System. All Rights Reserved.</p>
-          <div class="footer-links">
-            <a href="#">Privacy Policy</a>
-            <span>/</span>
-            <a href="#">Terms of Service</a>
-          </div>
+          <div class="footer-links"><a href="#">Privacy Policy</a><span>/</span><a href="#">Terms of Service</a></div>
         </div>
       </div>
     </section>
@@ -885,7 +700,6 @@
   </main>
 
   <script>
-
     const introWords = document.querySelectorAll('.intro-word');
     const introAxis  = document.getElementById('introAxis');
     const introEl    = document.getElementById('intro');
@@ -916,8 +730,8 @@
         entries.forEach(e => {
           if (!e.isIntersecting) return;
           const id = e.target.id;
-          document.querySelectorAll('.nav-link').forEach(link =>
-            link.classList.toggle('active', link.getAttribute('href') === `#${id}`)
+          document.querySelectorAll('.nav-link').forEach(l =>
+            l.classList.toggle('active', l.getAttribute('href') === `#${id}`)
           );
         });
       }, { rootMargin: '-49% 0px -49% 0px', threshold: 0 }).observe(sec);
@@ -930,18 +744,14 @@
     function spawnRevealStep(x, y, ox, oy) {
       const el = document.createElement('div');
       el.className = 'reveal-step';
-      const w = 260 + Math.random() * 80;
-      const h = 180 + Math.random() * 60;
+      const w = 260 + Math.random() * 80, h = 180 + Math.random() * 60;
       el.style.cssText = `width:${w}px;height:${h}px;left:${x+ox}px;top:${y+oy}px`;
       const inner = document.createElement('div');
-      inner.style.cssText = `
-        position:absolute;inset:0;
+      inner.style.cssText = `position:absolute;inset:0;
         background-image:url("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnRxd2gyczIzbzNkemxuNDF0dDM0Y2RlNmJhZDczbDVjZzlsbDN1MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5tiLNVq0poAXL0SVIn/giphy.gif");
         background-size:${whyusSection.offsetWidth}px ${whyusSection.offsetHeight}px;
         background-position:${-(x+ox)+w/2}px ${-(y+oy)+h/2}px;
-        background-repeat:no-repeat;
-        filter:brightness(1.25) contrast(1.18) saturate(1.08);
-      `;
+        background-repeat:no-repeat;filter:brightness(1.25) contrast(1.18) saturate(1.08);`;
       el.appendChild(inner);
       revealLayer.appendChild(el);
       setTimeout(() => el.remove(), 850);
@@ -950,24 +760,22 @@
     whyusSection.addEventListener('mousemove', e => {
       if (revealLocked) return;
       const r = whyusSection.getBoundingClientRect();
-      spawnRevealStep(e.clientX - r.left, e.clientY - r.top,   0,   0);
-      spawnRevealStep(e.clientX - r.left, e.clientY - r.top,  90,  55);
-      spawnRevealStep(e.clientX - r.left, e.clientY - r.top, 180, 110);
+      spawnRevealStep(e.clientX-r.left, e.clientY-r.top, 0, 0);
+      spawnRevealStep(e.clientX-r.left, e.clientY-r.top, 90, 55);
+      spawnRevealStep(e.clientX-r.left, e.clientY-r.top, 180, 110);
       revealLocked = true;
       setTimeout(() => { revealLocked = false; }, 55);
     });
 
     const cursor = document.getElementById('cursor');
-    let mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my;
+    let mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my;
     window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     (function tickCursor() {
-      cx += (mx - cx) * .18;
-      cy += (my - cy) * .18;
-      cursor.style.left = cx + 'px';
-      cursor.style.top  = cy + 'px';
+      cx += (mx-cx)*.18; cy += (my-cy)*.18;
+      cursor.style.left = cx+'px'; cursor.style.top = cy+'px';
       requestAnimationFrame(tickCursor);
     })();
-    document.querySelectorAll('a, button').forEach(el => {
+    document.querySelectorAll('a,button').forEach(el => {
       el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
       el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
     });
@@ -984,83 +792,55 @@
 
     function initFeaturesGSAP() {
       gsap.registerPlugin(ScrollTrigger);
-
-      const stConfig = { trigger: '#features-viewport', start: 'top top', end: '+=300%', scrub: 1 };
-      const tl = gsap.timeline({ scrollTrigger: { ...stConfig, pin: true } });
-
-      gsap.to('.building-bg', { y: '35vh', ease: 'none', scrollTrigger: stConfig });
-
+      const stCfg = { trigger: '#features-viewport', start: 'top top', end: '+=300%', scrub: 1 };
+      const tl = gsap.timeline({ scrollTrigger: { ...stCfg, pin: true } });
+      gsap.to('.building-bg', { y: '35vh', ease: 'none', scrollTrigger: stCfg });
       gsap.set('#cable1', { xPercent:-50, yPercent:-50, rotation:25,  opacity:0, x:'-80vw', y:'-40vh' });
       gsap.set('#box1-a', { xPercent:-50, yPercent:-50, rotation:25,  opacity:0, x:'-20vw', y:'-45vh' });
       gsap.set('#box1-b', { xPercent:-50, yPercent:-50, rotation:25,  opacity:0, x:'-20vw', y: '60vh' });
       gsap.set('#cable2', { xPercent:-50, yPercent:-50, rotation:155,            x: '80vw', y:'-60vh' });
-
       tl
-        .to('#cable1',          { opacity:1, x:'0vw',  y:'0vh',   duration:1.5, ease:'power2.out' })
+        .to('#cable1',          { opacity:1, x:'0vw',  y:'0vh',  duration:1.5, ease:'power2.out' })
         .to('#box1-a',          { opacity:1, x:'-5vw', y:'-27vh', duration:.8  }, '-=1')
         .to('#box1-b',          { opacity:1, x:'-5vw', y: '16vh', duration:.8  }, '-=0.8')
         .to({},                 { duration:.5 })
-        .to('.feature-panel-2', { yPercent:-100,             duration:1.5, ease:'power3.inOut' })
-        .to('.p1-content',      { y:'-40vh', opacity:0,      duration:1.5, ease:'power3.inOut' }, '<')
+        .to('.feature-panel-2', { yPercent:-100,        duration:1.5, ease:'power3.inOut' })
+        .to('.p1-content',      { y:'-40vh', opacity:0, duration:1.5, ease:'power3.inOut' }, '<')
         .fromTo('#text2-top',   { opacity:0, y:30 }, { opacity:1, y:0, duration:1 }, '-=0.5')
-        .to('#step1',           { opacity:1, y:0, color:'var(--accent)', duration:.8 })
-        .to('#cable2',          { x:'40vw', y:'-30vh', duration:1, ease:'power2.out' }, '<')
-        .to('#step2',           { opacity:1, y:0, color:'var(--accent)', duration:.8 })
-        .to('#cable2',          { x:'20vw', y:'-15vh', duration:1, ease:'power2.out' }, '<')
-        .to('#step3',           { opacity:1, y:0, color:'var(--accent)', duration:.8 })
-        .to('#cable2',          { x:'0vw',  y:'0vh',  duration:1, ease:'power2.out' }, '<')
-        .to({},                 { duration:1 });
-
+        .to('#step1', { opacity:1, y:0, color:'var(--accent)', duration:.8 })
+        .to('#cable2', { x:'40vw', y:'-30vh', duration:1, ease:'power2.out' }, '<')
+        .to('#step2', { opacity:1, y:0, color:'var(--accent)', duration:.8 })
+        .to('#cable2', { x:'20vw', y:'-15vh', duration:1, ease:'power2.out' }, '<')
+        .to('#step3', { opacity:1, y:0, color:'var(--accent)', duration:.8 })
+        .to('#cable2', { x:'0vw',  y:'0vh',  duration:1, ease:'power2.out' }, '<')
+        .to({}, { duration:1 });
       ScrollTrigger.refresh();
     }
 
     function initReviewAnimations() {
-
       const blocks = [
-        { id: 'rv-courier',    from: { y: 70,  opacity: 0 } },
-        { id: 'rv-employee',   from: { y: 60,  x: 40, opacity: 0 } },
-        { id: 'rv-fieldworker',from: { y: 60,  x: -40, opacity: 0 } },
-        { id: 'rv-student',    from: { y: 80,  scale: 0.96, opacity: 0 } },
-        { id: 'rv-tourist',    from: { y: 50,  opacity: 0 } },
+        { id: 'rv-courier',     from: { y: 70,  opacity: 0 } },
+        { id: 'rv-employee',    from: { y: 60,  x: 40, opacity: 0 } },
+        { id: 'rv-fieldworker', from: { y: 60,  x: -40, opacity: 0 } },
+        { id: 'rv-student',     from: { y: 80,  scale: 0.96, opacity: 0 } },
+        { id: 'rv-tourist',     from: { y: 50,  opacity: 0 } },
       ];
-
       blocks.forEach(({ id, from }) => {
         const el = document.getElementById(id);
         if (!el) return;
-
-        gsap.from(el, {
-          ...from,
-          duration: 1.3,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 86%',
-            toggleActions: 'play none none none',
-          }
+        gsap.from(el, { ...from, duration: 1.3, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none none' }
         });
-
         const img = el.querySelector('.rv-img img');
         if (img) {
-          gsap.fromTo(img,
-            { yPercent: -8 },
-            {
-              yPercent: 8,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: el,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 1.2,
-              }
-            }
-          );
+          gsap.fromTo(img, { yPercent: -8 }, { yPercent: 8, ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.2 }
+          });
         }
       });
-
       const specsImg = document.getElementById('specsExplodedImg');
       if (specsImg) {
-        gsap.from(specsImg, {
-          scale: 1.04, opacity: 0, duration: 0.7, ease: 'power2.out',
+        gsap.from(specsImg, { scale: 1.04, opacity: 0, duration: 0.7, ease: 'power2.out',
           scrollTrigger: { trigger: specsImg, start: 'top 90%', toggleActions: 'play none none none' }
         });
       }
