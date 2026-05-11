@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AXIS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+  <style>
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #000;
+      --bg2:    #080808;
+      --text:   #f0f0f0;
+      --muted:  rgba(240,240,240,.62);
+      --dim:    rgba(240,240,240,.36);
+      --accent: #FF0101;
+
+      --lh-body: 1.85;   
+      --lh-head: 1.12;   
+      --ls-body: .006em; 
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'SUIT', sans-serif;
+      overflow-x: hidden;
+      overflow-y: hidden;
+
+      line-height: var(--lh-body);
+      letter-spacing: var(--ls-body);
+    }
+    body.ready { overflow-y: auto; }
+    a    { color: inherit; text-decoration: none; }
+    img, video { display: block; width: 100%; }
+
+    #cursor {
+      position: fixed; left: 0; top: 0;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent); pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 14px rgba(255,1,1,.4);
+      transition: width .18s, height .18s;
+    }
+    #cursor.hover { width: 16px; height: 16px; }
+
+    #intro {
+      position: fixed; inset: 0;
+      background: var(--bg); z-index: 999; transition: opacity .8s;
+    }
+    .intro-word, #introAxis {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(.95);
+      font-family: 'Space Grotesk', sans-serif;
+      white-space: nowrap; opacity: 0;
+    }
+    .intro-word {
+      font-size: 36px; font-weight: 600; letter-spacing: .18em;
+      transition: opacity .4s, transform .4s, color .4s;
+    }
+    .intro-word.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    #introAxis {
+      font-size: 140px; font-weight: 700; letter-spacing: .12em;
+      transition: opacity .45s, transform 2.4s cubic-bezier(.18,.78,.12,1);
+    }
+    #introAxis.show   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    #introAxis.expand { transform: translate(-50%, -50%) scale(8.5); }
+
+    .logo {
+      position: fixed; top: 24px; left: 28px; z-index: 200;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px; font-weight: 700; letter-spacing: .05em;
+    }
+    .side-nav {
+      position: fixed; right: 28px; top: 50%;
+      transform: translateY(-50%); z-index: 200;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+    }
+    .side-nav a {
+      position: relative; padding-right: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,.46);
+      transition: color .25s, transform .25s; white-space: nowrap;
+    }
+    .side-nav a::after {
+      content: ""; position: absolute; right: 0; top: 50%;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,.18);
+      transform: translateY(-50%); transition: .25s;
+    }
+    .side-nav a:hover            { color: #fff; transform: translateX(-3px); }
+    .side-nav a:hover::after     { background: rgba(255,255,255,.88); }
+    .side-nav a.active           { color: #fff; font-weight: 700; }
+    .side-nav a.active::after    { background: var(--accent); box-shadow: 0 0 10px rgba(255,1,1,.5); transform: translateY(-50%) scale(1.2); }
+
+    #main { opacity: 0; transition: opacity 1s; }
+    #main.show { opacity: 1; }
+    section { position: relative; overflow: hidden; }
+
+    .eyebrow {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .28em; text-transform: uppercase; color: var(--dim);
+    }
+
+    .sr { opacity: 0; transform: translateY(22px); transition: opacity .75s, transform .75s; }
+    .sr.visible { opacity: 1; transform: translateY(0); }
+
+    .hero { min-height: 100vh; }
+    .hero video {
+      position: absolute; inset: 0; height: 100%; object-fit: cover;
+      filter: brightness(.56) contrast(1.08) saturate(.72) sepia(.08) hue-rotate(-8deg);
+      transform: scale(1.03);
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(180deg, rgba(0,0,0,.38) 0%, rgba(0,0,0,.08) 35%, rgba(0,0,0,.52) 100%);
+    }
+    .hero-copy {
+      position: relative; z-index: 2; min-height: 100vh;
+      display: flex; align-items: flex-end; padding: 0 28px 36px;
+    }
+    .hero-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(240,240,240,.5); margin-bottom: 14px;
+    }
+    .hero-title { font-size: 74px; line-height: 1.08; letter-spacing: -.04em; font-weight: 800; word-break: keep-all; }
+    .hero-title span { color: var(--accent); }
+    .hero-desc { margin-top: 16px; max-width: 460px; font-size: 18px; line-height: 1.9; color: var(--muted); letter-spacing: .01em; }
+
+    .whyus { min-height: 100vh; background: #000; }
+    .whyus-bg {
+      position: absolute; inset: 0;
+      background: url("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnRxd2gyczIzbzNkemxuNDF0dDM0Y2RlNmJhZDczbDVjZzlsbDN1MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5tiLNVq0poAXL0SVIn/giphy.gif") center/cover no-repeat;
+    }
+    .whyus::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.97); z-index: 1; }
+    .whyus-inner {
+      position: relative; z-index: 2; min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 80px 28px;
+      width: min(1540px, calc(100vw - 56px)); margin: 0 auto;
+    }
+    .whyus .eyebrow { margin-bottom: 28px; letter-spacing: .32em; }
+    .whyus-title {
+      font-size: clamp(60px, 9vw, 160px);
+      line-height: 1.06; letter-spacing: -.07em; font-weight: 800;
+      word-break: keep-all; text-wrap: balance;
+    }
+    .whyus-title span, .whyus-desc span { color: var(--accent); }
+    .whyus-desc {
+      width: min(1100px, calc(100vw - 100px)); margin-top: 52px;
+      font-size: clamp(18px, 1.5vw, 26px); line-height: 2.2; text-align: justify;
+      color: rgba(255,255,255,.76); letter-spacing: .01em;
+    }
+    .reveal-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+    .reveal-step {
+      position: absolute; border-radius: 6px; overflow: hidden;
+      transform: translate(-50%, -50%) scale(.5); opacity: 0;
+      animation: stepFade .85s ease-out forwards;
+    }
+    @keyframes stepFade {
+      0%   { opacity: 0; transform: translate(-50%,-50%) scale(.5); }
+      20%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      70%  { opacity: 1; transform: translate(-50%,-50%) scale(1.03); }
+      100% { opacity: 0; transform: translate(-50%,-50%) scale(1.12); }
+    }
+
+    #features-viewport {
+      position: relative; width: 100vw; height: 100vh; overflow: hidden;
+      background: linear-gradient(180deg, #4A90E2 0%, #87CEFA 100%);
+    }
+    .building-bg {
+      position: absolute; top: -35vh; left: -25vw; width: 150vw; height: 140vh;
+      background-image: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('building.png');
+      background-size: cover; background-position: center; z-index: 0; will-change: transform;
+    }
+    .feature-panel { position: absolute; left: 0; width: 100%; height: 100vh; background: transparent; will-change: transform; overflow: hidden; }
+    .feature-panel-1 { z-index: 10; top: 0; }
+    .feature-panel-2 { z-index: 20; top: 100%; }
+    .p1-content { position: absolute; width: 100%; height: 100%; }
+    .cable-wrapper { position: absolute; top: 50%; left: 50%; width: 0; height: 0; z-index: 1; }
+    .cable-img { position: absolute; width: 150vw; }
+    .text-box { position: absolute; top: 50%; left: 50%; width: 85vw; display: flex; align-items: center; opacity: 0; z-index: 5; }
+    #box1-a { justify-content: flex-end; }
+    #box1-b { justify-content: flex-start; padding-left: 15vw; }
+    .diag-text { font-weight: 800; letter-spacing: -.05em; line-height: 1; word-break: keep-all; white-space: nowrap; }
+    #text1-a { color: var(--text); font-size: clamp(50px, 8.5vw, 150px); }
+    #text1-b { color: var(--accent); font-size: clamp(70px, 11vw, 190px); }
+    .feature-top-text { position: absolute; top: 12%; left: 8%; font-size: clamp(60px, 8vw, 120px); font-weight: 800; white-space: nowrap; z-index: 5; }
+    .feature-side-menu { position: absolute; top: 68%; right: 12%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-end; gap: 6vh; z-index: 5; }
+    .feature-step-text { font-size: clamp(50px, 7vw, 100px); font-weight: 900; letter-spacing: .1em; opacity: 0; transform: translateY(20px); color: rgba(255,255,255,.15); line-height: 1; }
+
+    #tech-section { background: var(--bg); }
+    .tech-intro { text-align: center; padding: 140px 28px 60px; }
+    .tech-intro .eyebrow { margin-bottom: 20px; }
+    .tech-intro h2 { font-size: clamp(52px, 7vw, 110px); line-height: 1.04; letter-spacing: -.05em; font-weight: 800; }
+
+    .tech-stage {
+      position: relative; width: 100%; height: 80vh; min-height: 560px;
+      background: radial-gradient(ellipse 65% 55% at 50% 55%, rgba(255,1,1,.07) 0%, transparent 70%);
+    }
+    .tech-stage model-viewer { width: 100%; height: 100%; outline: none; border: none; --poster-color: transparent; }
+    .tech-stage model-viewer:focus,
+    .tech-stage model-viewer:focus-visible { outline: none; box-shadow: none; }
+    .tech-stage-hint {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--dim); pointer-events: none; white-space: nowrap;
+    }
+
+    .tech-pillars {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      padding: 80px 0 70px; gap: 0;
+      width: min(1100px, calc(100% - 80px)); margin: 0 auto;
+    }
+    .tech-pillar { padding: 0 40px; text-align: center; opacity: 0; transform: translateY(22px); transition: opacity .7s, transform .7s; }
+    .tech-pillar:first-child { padding-left: 0; }
+    .tech-pillar:last-child  { padding-right: 0; }
+    .tech-pillar.visible { opacity: 1; transform: translateY(0); }
+    .pillar-num   { font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: .22em; color: var(--accent); display: block; margin-bottom: 16px; }
+    .pillar-title { font-size: 20px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 10px; line-height: 1.3; }
+    .pillar-text  { font-size: 15px; line-height: 1.85; color: var(--muted); word-break: keep-all; letter-spacing: .01em; }
+
+    .ts-real { position: relative; overflow: hidden; background: #000; }
+    .ts-real img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      opacity: 0; transform: scale(1.04);
+      transition: opacity 1.2s ease, transform 1.6s cubic-bezier(.25,.46,.45,.94);
+    }
+    .ts-real img.loaded { opacity: 1; transform: scale(1); }
+    .ts-real:hover img.loaded { transform: scale(1.055); }
+
+    .ts-sub {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 500; letter-spacing: .24em;
+      text-transform: uppercase; color: #aaa; display: block; margin-bottom: 18px;
+    }
+
+    .ts-a, .ts-b, .ts-c { background: #fff; color: #111; }
+
+    .ts-a { display: grid; grid-template-columns: 36fr 64fr; min-height: 640px; }
+    .ts-a-left { display: flex; flex-direction: column; padding: 72px 40px 60px min(80px, 6vw); }
+    .ts-a-left h3 { font-size: clamp(26px, 2.8vw, 44px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; margin-bottom: 16px; color: #111; word-break: keep-all; }
+    .ts-a-left h3 em { font-style: normal; color: var(--accent); }
+    .ts-a-left p { font-size: 15px; line-height: 1.9; color: #666; max-width: 300px; word-break: keep-all; letter-spacing: .01em; }
+    .ts-a-smalls { display: grid; grid-template-columns: 1fr 1fr; flex: 1; margin-top: 36px; gap: 4px; }
+    .ts-a-small { min-height: 200px; }
+
+    .ts-b { display: grid; grid-template-columns: 55fr 45fr; min-height: 580px; }
+    .ts-b-right { display: flex; flex-direction: column; background: #fff; }
+    .ts-b-small { height: 46%; }
+    .ts-b-text { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 48px 60px 48px 52px; }
+    .ts-b-text h3 { font-size: clamp(26px, 2.8vw, 44px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; margin-bottom: 16px; color: #111; word-break: keep-all; }
+    .ts-b-text h3 em { font-style: normal; color: var(--accent); }
+    .ts-b-text p { font-size: 15px; line-height: 1.9; color: #666; word-break: keep-all; letter-spacing: .01em; }
+
+    .ts-c-meta  { padding: 72px min(80px, 6vw) 32px; background: #fff; }
+    .ts-c-stage { position: relative; background: #fff; overflow: hidden; }
+    .ts-c-img-wrap { position: relative; width: 100%; }
+    @keyframes engineBreathe {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.012); }
+    }
+    .ts-c-img-wrap > img { width: 100%; height: auto; display: block; animation: engineBreathe 10s ease-in-out infinite; }
+
+    .anno { position: absolute; display: flex; align-items: center; pointer-events: none; left: var(--x); top: var(--y); z-index: 5; }
+    .anno.R { flex-direction: row;  transform: translate(0, -50%); }
+    .anno.L { flex-direction: row;  transform: translate(-100%, -50%); }
+    .anno-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 0 3px rgba(255,1,1,.22), 0 0 14px rgba(255,1,1,.3); }
+    .anno-line { width: var(--w, 120px); height: 2px; background: rgba(0,0,0,.35); flex-shrink: 0; }
+    .anno-label { display: flex; flex-direction: column; line-height: 1; }
+    .anno.R .anno-label { align-items: flex-start; padding-left: 14px; }
+    .anno.L .anno-label { align-items: flex-end; text-align: right; padding-right: 14px; }
+    .anno-val { font-family: 'SUIT', sans-serif; font-size: clamp(14px, 1.4vw, 21px); font-weight: 700; line-height: 1; letter-spacing: -.03em; color: #111; white-space: nowrap; }
+    .anno-sub { font-family: 'SUIT', sans-serif; font-size: clamp(10px, .75vw, 12px); font-weight: 500; color: #888; margin-top: 6px; white-space: nowrap; }
+
+    #specs-section { background: var(--bg2); }
+
+    .specs-header {
+      padding: 120px min(80px, 6vw) 70px;
+    }
+    .specs-header h2 { font-size: clamp(48px, 6.5vw, 100px); line-height: 1.05; letter-spacing: -.05em; font-weight: 800; }
+    .specs-header h2 .eyebrow { margin-bottom: 20px; display: block; }
+
+    .specs-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; padding: 0 min(80px,6vw) 80px; }
+    .stat-block { text-align: left; padding-right: 20px; opacity: 0; transform: translateY(16px); transition: opacity .6s, transform .6s; }
+    .stat-block:last-child { padding-right: 0; }
+    .stat-block.visible { opacity: 1; transform: translateY(0); }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: clamp(48px, 5.5vw, 90px); font-weight: 700; line-height: 1; letter-spacing: -.04em; }
+    .stat-num sup { font-size: .42em; vertical-align: top; margin-top: .2em; color: var(--accent); }
+    .stat-label { display: block; margin-top: 10px; font-size: 13px; color: var(--dim); }
+
+    .specs-exploded {
+      position: relative; width: 100%;
+      aspect-ratio: 21 / 9;
+      overflow: hidden; background: #0a0a0a;
+    }
+    .specs-exploded img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      opacity: 0; transform: scale(1.03);
+      transition: opacity 1.4s ease, transform 2.2s cubic-bezier(.25,.46,.45,.94);
+    }
+    .specs-exploded img.loaded { opacity: 1; transform: scale(1); }
+
+    .specs-table { display: grid; grid-template-columns: repeat(4, 1fr); padding: 60px min(80px, 6vw) 100px; }
+    .spec-col { padding-right: 32px; }
+    .spec-col:last-child { padding-right: 0; }
+    .spec-col-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px,4vw,60px); font-weight: 800; letter-spacing: -.03em;
+      color: var(--accent); margin-bottom: 28px; display: block; line-height: 1.15;
+    }
+    .spec-row { padding: 12px 0; }
+    .spec-row dt { font-size: 14px; color: var(--dim); margin-bottom: 5px; letter-spacing: .02em; }
+    .spec-row dd { font-size: 20px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
+
+    #reviews-section { background: #0b0d1a; }
+
+    .reviews-header { padding: 120px min(80px, 6vw) 80px; text-align: center; }
+    .reviews-header .eyebrow { margin-bottom: 20px; display: block; }
+    .reviews-header h2 {
+      font-size: clamp(60px, 7vw, 100px);
+      line-height: 1; letter-spacing: -.03em; font-weight: 800;
+      white-space: nowrap; display: inline-block;
+    }
+
+    .rv-img {
+      position: relative; overflow: hidden; background: #111;
+    }
+
+    .rv-img img {
+      position: absolute; left: 0; width: 100%;
+      top: -8%; height: 116%;
+      object-fit: cover;
+      opacity: 0; transition: opacity 1s ease;
+      will-change: transform;
+    }
+    .rv-img img.loaded { opacity: 1; }
+
+    .rv-quote {
+      font-weight: 700; line-height: 1.6; word-break: keep-all; letter-spacing: -.01em;
+      color: var(--text);
+      font-size: clamp(22px, 2.2vw, 34px);
+    }
+
+    .rv-rh { color: var(--accent); }
+
+    .rv-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800; line-height: .88;
+      letter-spacing: .04em;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(255,1,1,.7);
+      display: block; flex-shrink: 0;
+    }
+
+    #rv-student  .rv-num,
+    #rv-tourist  .rv-num { -webkit-text-stroke-width: 3px; }
+
+    #rv-courier     .rv-num { font-size: clamp(90px,  12vw, 175px); }
+    #rv-employee    .rv-num { font-size: clamp(140px, 17vw, 250px); }
+    #rv-fieldworker .rv-num { font-size: clamp(110px, 14vw, 205px); }
+    #rv-student     .rv-num { font-size: clamp(90px, 11vw, 160px); }
+    #rv-tourist     .rv-num { font-size: clamp(175px, 22vw, 340px); }
+
+    .rv-block { will-change: transform, opacity; }
+
+    .rv-1 { padding-bottom: 48px; }
+    .rv-1 .rv-img { width: 100%; aspect-ratio: 16 / 9; }
+    .rv-1 .rv-below {
+      display: flex; align-items: center; gap: 0;
+      padding: 20px min(80px, 6vw) 0;
+    }
+    .rv-1 .rv-num { margin-right: 48px; flex-shrink: 0; }
+    .rv-1 .rv-quote { font-size: clamp(24px, 2.4vw, 38px); flex: 1; }
+
+    .rv-2 {
+      display: grid; grid-template-columns: 42fr 58fr;
+      align-items: stretch; padding-bottom: 48px;
+    }
+    .rv-2 .rv-text {
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 32px 40px 44px min(80px, 6vw);
+    }
+    .rv-2 .rv-img { aspect-ratio: 4 / 3; }
+
+    .rv-3 {
+      display: grid; grid-template-columns: 62fr 38fr;
+      align-items: stretch; padding-bottom: 48px;
+    }
+    .rv-3 .rv-text {
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 32px min(80px, 6vw) 44px 44px;
+    }
+    .rv-3 .rv-img { aspect-ratio: 3 / 2; }
+
+    .rv-4 {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 min(80px, 6vw) 48px;
+    }
+    .rv-4 .rv-img { width: 58%; aspect-ratio: 5 / 4; }
+    .rv-4 .rv-below {
+      width: 58%;
+      display: flex; align-items: center; gap: 0;
+      padding-top: 20px;
+    }
+    .rv-4 .rv-num { margin-right: 40px; flex-shrink: 0; }
+    .rv-4 .rv-quote { flex: 1; text-align: right; font-size: clamp(19px, 1.9vw, 28px); line-height: 1.65; }
+
+    .rv-5 {
+      display: grid; grid-template-columns: 50fr 50fr;
+      align-items: stretch; padding-bottom: 100px;
+    }
+    .rv-5 .rv-text {
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 32px 40px 44px min(80px, 6vw);
+    }
+    .rv-5 .rv-quote { line-height: 1.6; }
+    .rv-5 .rv-img { aspect-ratio: 4 / 5; }
+
+    #purchase-section { background: #060606; }
+    .purchase-grid { display: grid; grid-template-columns: 52fr 48fr; min-height: 100vh; }
+    .purchase-img { position: relative; overflow: hidden; background: #0a0a0a; }
+    .purchase-img::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,1,1,.06) 0%, transparent 65%);
+      pointer-events: none; z-index: 1;
+    }
+    .purchase-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .purchase-info { display: flex; flex-direction: column; justify-content: center; padding: 80px min(80px, 6vw) 80px 72px; }
+    .purchase-info .eyebrow { margin-bottom: 28px; }
+    .purchase-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(72px, 9vw, 140px); font-weight: 700; line-height: .95; letter-spacing: -.04em; margin-bottom: 8px; }
+    .purchase-subtitle { font-size: 18px; color: var(--muted); letter-spacing: .04em; margin-bottom: 52px; }
+    .purchase-price { margin-bottom: 40px; }
+    .purchase-price-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+    .purchase-price-num { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 3.5vw, 52px); font-weight: 700; letter-spacing: -.03em; color: var(--text); }
+    .purchase-includes { list-style: none; margin-bottom: 48px; display: flex; flex-direction: column; gap: 12px; }
+    .purchase-includes li { font-size: 16px; color: var(--muted); padding-left: 18px; position: relative; }
+    .purchase-includes li::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 5px; height: 1px; background: var(--accent); }
+    .purchase-cta { display: block; background: var(--accent); color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .06em; text-transform: uppercase; text-align: center; padding: 20px 40px; cursor: pointer; margin-bottom: 16px; transition: background .2s, transform .15s; }
+    .purchase-cta:hover { background: #e00000; transform: translateY(-1px); }
+    .purchase-secondary { display: block; text-align: center; font-size: 15px; color: var(--muted); padding: 12px; border: 1px solid rgba(255,255,255,.1); transition: border-color .2s, color .2s; }
+    .purchase-secondary:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
+
+    #footer-section { background: var(--bg2); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+    .footer-inner { width: min(1280px, calc(100% - 56px)); margin: 0 auto; padding: 120px 0 60px; }
+    .footer-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 80px; padding-bottom: 80px; }
+    .footer-brand-block .eyebrow { margin-bottom: 20px; display: block; }
+    .footer-brand { font-size: clamp(26px, 2.2vw, 40px); line-height: 1.1; letter-spacing: -.04em; font-weight: 800; margin-bottom: 24px; }
+    .footer-brand em { font-style: normal; color: var(--accent); }
+    .footer-about-text { font-size: 16px; line-height: 1.9; color: var(--muted); word-break: keep-all; }
+    .footer-col-title { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); margin-bottom: 28px; display: block; }
+    .footer-info-stack { display: flex; flex-direction: column; gap: 22px; }
+    .footer-info-key { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 5px; }
+    .footer-info-val     { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,.8); }
+    .footer-info-val.sub { font-size: 14px; color: var(--muted); }
+    .footer-social { display: flex; flex-wrap: wrap; gap: 14px; }
+    .footer-social a { font-size: 14px; color: var(--muted); transition: color .2s; }
+    .footer-social a:hover { color: var(--text); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.06); }
+    .footer-copy { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: rgba(255,255,255,.28); }
+    .footer-links { display: flex; align-items: center; gap: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: rgba(255,255,255,.42); }
+    .footer-links span { opacity: .3; }
+  </style>
+</head>
+<body>
+
+  <div id="intro">
+    <div class="intro-word">LIMITED</div>
+    <div class="intro-word">PATH</div>
+    <div class="intro-word">REPEAT</div>
+    <div class="intro-word">BREAK</div>
+    <div class="intro-word">MOVE</div>
+    <div id="introAxis">AXIS</div>
+  </div>
+
+  <a href="#intro-section" class="logo">AXIS</a>
+
+  <nav class="side-nav">
+    <a href="#intro-section"    class="nav-link">Intro</a>
+    <a href="#whyus-section"    class="nav-link">Why Us</a>
+    <a href="#features-section" class="nav-link">Features</a>
+    <a href="#tech-section"     class="nav-link">Tech &amp; Materials</a>
+    <a href="#specs-section"    class="nav-link">Specs</a>
+    <a href="#reviews-section"  class="nav-link">Reviews</a>
+    <a href="#purchase-section" class="nav-link">Order</a>
+    <a href="#footer-section"   class="nav-link">Details</a>
+  </nav>
+
+  <div id="cursor"></div>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section id="intro-section" class="hero section">
+      <video autoplay muted loop playsinline>
+        <source src="video 1.mp4" type="video/mp4">
+      </video>
+      <div class="hero-copy">
+        <div>
+          <p class="hero-kicker">AXIS / URBAN TRAVERSAL SYSTEM</p>
+          <h1 class="hero-title">이동의 <span>기준</span>을 바꾸다</h1>
+          <p class="hero-desc">공간을 활용하는 새로운 방식, AXIS</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY US -->
+    <section id="whyus-section" class="whyus section">
+      <div class="whyus-bg"></div>
+      <div class="reveal-layer" id="revealLayer"></div>
+      <div class="whyus-inner">
+        <p class="eyebrow">WHY US</p>
+        <h2 class="whyus-title">우리는 왜 <span>정해진 경로</span>만<br>따라 이동해야 하는가</h2>
+        <p class="whyus-desc">
+          지금까지의 이동은 <span>계단, 엘리베이터, 복도</span>처럼 이미 설계된 구조물에 사용자가 맞추는 방식이었다.
+          AXIS는 이러한 관습적 틀을 깨고 <span>공간 그 자체를 이동의 새로운 축</span>으로 활용한다.
+          도심 속 건물들을 능동적인 통로로 전환함으로써 <span>가장 직관적이고 효율적인 이동의 새로운 방향</span>을 제시한다.
+        </p>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features-section" class="section">
+      <div id="features-viewport">
+        <div class="building-bg"></div>
+        <div class="feature-panel feature-panel-1">
+          <div class="p1-content">
+            <div class="cable-wrapper"><img src="kable.png" alt="cable" class="cable-img" id="cable1"></div>
+            <div class="text-box" id="box1-a"><h2 class="diag-text" id="text1-a">경로가 없다면,</h2></div>
+            <div class="text-box" id="box1-b"><h2 class="diag-text" id="text1-b">만들어라</h2></div>
+          </div>
+        </div>
+        <div class="feature-panel feature-panel-2">
+          <div class="cable-wrapper"><img src="kable.png" alt="cable diagonal" class="cable-img" id="cable2"></div>
+          <div class="feature-top-text" id="text2-top">버튼 한 번으로</div>
+          <div class="feature-side-menu">
+            <span class="feature-step-text" id="step1">고정</span>
+            <span class="feature-step-text" id="step2">연결</span>
+            <span class="feature-step-text" id="step3">이동</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECH & MATERIALS -->
+    <section id="tech-section" class="section">
+
+      <div class="tech-intro sr">
+        <p class="eyebrow">Tech &amp; Materials</p>
+        <h2>도시를 가로지르는<br><span style="color:var(--accent)">핵심</span> 메커니즘</h2>
+      </div>
+
+      <div class="tech-stage">
+        <model-viewer
+          src="3d.glb" alt="AXIS 3D Model"
+          auto-rotate camera-controls
+          shadow-intensity="1.2" exposure="1.3"
+          interaction-prompt="none" bounds="tight"
+          min-camera-orbit="auto auto 5%"
+          max-camera-orbit="auto auto 200%">
+        </model-viewer>
+        <p class="tech-stage-hint">드래그하여 회전 &nbsp;·&nbsp; 스크롤하여 확대</p>
+      </div>
+
+      <div class="tech-pillars">
+        <div class="tech-pillar">
+          <span class="pillar-num">01</span>
+          <p class="pillar-title">듀얼 케이블 안정화</p>
+          <p class="pillar-text">양측 고정으로 공중에서의 흔들림을 완전히 제거</p>
+        </div>
+        <div class="tech-pillar" style="transition-delay:.1s">
+          <span class="pillar-num">02</span>
+          <p class="pillar-title">비파괴 복합 고정</p>
+          <p class="pillar-text">모든 표면에 손상 없이 부착</p>
+        </div>
+        <div class="tech-pillar" style="transition-delay:.2s">
+          <span class="pillar-num">03</span>
+          <p class="pillar-title">실시간 장력 제어</p>
+          <p class="pillar-text">하중 변화를 즉시 계산해 안정적인 속도를 유지</p>
+        </div>
+      </div>
+
+      <!-- Story A · Cable System -->
+      <div class="ts-a">
+        <div class="ts-a-left sr">
+          <span class="ts-sub">01 · Cable System</span>
+          <h3>강철 심재<br>×&nbsp;<em>폴리머 외피</em></h3>
+          <p>항공 등급 강선 심재와 충격 흡수 폴리머 외피의 조합. 최대 장력 8kN, 무게는 극한으로 줄였다.</p>
+          <div class="ts-a-smalls">
+            <div class="ts-a-small ts-real"><img src="wick.png" alt="wire cross section"></div>
+            <div class="ts-a-small ts-real"><img src="anchor.png" alt="cable terminal"></div>
+          </div>
+        </div>
+        <div class="ts-a-hero ts-real">
+          <img src="cable anchor.png" alt="cable closeup">
+        </div>
+      </div>
+
+      <!-- Story B · Anchor System -->
+      <div class="ts-b">
+        <div class="ts-b-img ts-real">
+          <img src="attached to the building.png" alt="anchor on building">
+        </div>
+        <div class="ts-b-right">
+          <div class="ts-b-small ts-real">
+            <img src="stuck to the glass.png" alt="surface attachment">
+          </div>
+          <div class="ts-b-text sr">
+            <span class="ts-sub">02 · Anchor System</span>
+            <h3><em>이중 고정</em><br>진공 + 마찰</h3>
+            <p>진공압과 마찰 패드를 동시에 작동시켜 120kg 하중에서도 미끄러짐이 없다. 탈착 후 표면 손상이 없다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story C · Engine System -->
+      <div class="ts-c">
+        <div class="ts-c-meta sr">
+          <span class="ts-sub">03 · Engine System</span>
+        </div>
+        <div class="ts-c-stage">
+          <div class="ts-c-img-wrap">
+            <img src="engine.png" alt="AXIS drive engine cutaway">
+            <div class="anno L" style="--x:40%; --y:33%; --w:22vw;">
+              <div class="anno-label">
+                <span class="anno-val">실시간 온도 모니터</span>
+                <span class="anno-sub">시스템 발열 상태 실시간 추적</span>
+              </div>
+              <div class="anno-line"></div>
+              <div class="anno-dot"></div>
+            </div>
+            <div class="anno L" style="--x:45%; --y:53%; --w:22vw;">
+              <div class="anno-label">
+                <span class="anno-val">쿨링 터빈 유닛</span>
+                <span class="anno-sub">공기역학적 초고속 방열 구조</span>
+              </div>
+              <div class="anno-line"></div>
+              <div class="anno-dot"></div>
+            </div>
+            <div class="anno R" style="--x:54%; --y:50%; --w:22vw;">
+              <div class="anno-dot"></div>
+              <div class="anno-line"></div>
+              <div class="anno-label">
+                <span class="anno-val">스테이터 코일 시스템</span>
+                <span class="anno-sub">고밀도 전자기장 구동부 형성</span>
+              </div>
+            </div>
+            <div class="anno R" style="--x:51%; --y:73%; --w:26vw;">
+              <div class="anno-dot"></div>
+              <div class="anno-line"></div>
+              <div class="anno-label">
+                <span class="anno-val">냉각 배관</span>
+                <span class="anno-sub">특수 냉매 고속 순환 채널</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══ SPECS ══ -->
+    <section id="specs-section" class="section">
+
+      <div class="specs-header sr">
+        <h2>
+          <span class="eyebrow">Specs</span>
+          <span style="color:var(--accent)">가장</span> 작지만<br><span style="color:var(--accent)">가장</span> 빠른 장치
+        </h2>
+      </div>
+
+      <div class="specs-stats">
+        <div class="stat-block">
+          <p class="stat-num">3.5<sup>kg</sup></p>
+          <span class="stat-label">본체 중량</span>
+        </div>
+        <div class="stat-block" style="transition-delay:.08s">
+          <p class="stat-num">120<sup>kg</sup></p>
+          <span class="stat-label">최대 하중</span>
+        </div>
+        <div class="stat-block" style="transition-delay:.16s">
+          <p class="stat-num">30<sup>m</sup></p>
+          <span class="stat-label">최대 이동 거리</span>
+        </div>
+        <div class="stat-block" style="transition-delay:.24s">
+          <p class="stat-num">480<sup>W</sup></p>
+          <span class="stat-label">최대 출력</span>
+        </div>
+      </div>
+
+      <!-- 21:9 exploded view image -->
+      <div class="specs-exploded">
+        <img src="exploded view.png" alt="AXIS exploded view" id="specsExplodedImg">
+      </div>
+
+      <!-- Spec detail table -->
+      <div class="specs-table sr">
+        <div class="spec-col">
+          <span class="spec-col-title">기본<br>사양</span>
+          <dl>
+            <div class="spec-row"><dt>무게</dt><dd>3.5 kg</dd></div>
+            <div class="spec-row"><dt>최대 하중</dt><dd>120 kg</dd></div>
+            <div class="spec-row"><dt>크기</dt><dd>320 × 180 × 90</dd></div>
+          </dl>
+        </div>
+        <div class="spec-col">
+          <span class="spec-col-title">이동<br>성능</span>
+          <dl>
+            <div class="spec-row"><dt>케이블 길이</dt><dd>20 m × 2</dd></div>
+            <div class="spec-row"><dt>최대 이동 거리</dt><dd>30 m</dd></div>
+            <div class="spec-row"><dt>경사 대응</dt><dd>0 – 45°</dd></div>
+          </dl>
+        </div>
+        <div class="spec-col">
+          <span class="spec-col-title">드라이브<br>시스템</span>
+          <dl>
+            <div class="spec-row"><dt>모터 타입</dt><dd>브러시리스 DC</dd></div>
+            <div class="spec-row"><dt>최대 출력</dt><dd>480 W</dd></div>
+            <div class="spec-row"><dt>연속 토크</dt><dd>2.8 Nm</dd></div>
+          </dl>
+        </div>
+        <div class="spec-col">
+          <span class="spec-col-title">고정<br>시스템</span>
+          <dl>
+            <div class="spec-row"><dt>고정 방식</dt><dd>비파괴 복합</dd></div>
+            <div class="spec-row"><dt>진공압</dt><dd>–0.08 MPa</dd></div>
+            <div class="spec-row"><dt>반복 사용</dt><dd>5,000회</dd></div>
+          </dl>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══ REVIEWS ══ -->
+    <section id="reviews-section" class="section">
+
+      <div class="reviews-header sr">
+        <span class="eyebrow">Reviews</span>
+        <h2>이동의 <span style="color:var(--accent)">변화</span>, 결과의 <span style="color:var(--accent)">차이</span></h2>
+      </div>
+
+      <!-- 1: courier 16:9 — full width, number+quote inline below -->
+      <div class="rv-block rv-1" id="rv-courier">
+        <div class="rv-img">
+          <img src="courier.png" alt="courier">
+        </div>
+        <div class="rv-below">
+          <span class="rv-num">01</span>
+          <p class="rv-quote">"층마다 오르내릴 필요가 없으니까 <span class="rv-rh">배달 속도가 완전히</span> 달라졌어요."</p>
+        </div>
+      </div>
+
+      <!-- 2: employee 4:3 — number top / quote bottom / image right -->
+      <div class="rv-block rv-2" id="rv-employee">
+        <div class="rv-text">
+          <span class="rv-num">02</span>
+          <p class="rv-quote">"처음엔 반신반의했는데, 쓰고 나서는 <span class="rv-rh">진짜 출근 시간이 줄었어요.</span>"</p>
+        </div>
+        <div class="rv-img">
+          <img src="employee.png" alt="employee">
+        </div>
+      </div>
+
+      <!-- 3: field worker 3:2 — image left / number top + quote bottom -->
+      <div class="rv-block rv-3" id="rv-fieldworker">
+        <div class="rv-img">
+          <img src="field worker.png" alt="field worker">
+        </div>
+        <div class="rv-text">
+          <span class="rv-num">03</span>
+          <p class="rv-quote">"<span class="rv-rh">현장 이동 스트레스가 확 줄었어요.</span> 생각보다 훨씬 쓸만해요."</p>
+        </div>
+      </div>
+
+      <!-- 4: student 5:4 — centered image, number+quote inline below -->
+      <div class="rv-block rv-4" id="rv-student">
+        <div class="rv-img">
+          <img src="student.png" alt="student">
+        </div>
+        <div class="rv-below">
+          <span class="rv-num">04</span>
+          <p class="rv-quote">"지각할 것 같으면 그냥 AXIS 켜면 되더라고요 ㅋㅋ <span class="rv-rh">진짜 편해요.</span>"</p>
+        </div>
+      </div>
+
+      <!-- 5: tourist 4:5 — number top + big quote / portrait right -->
+      <div class="rv-block rv-5" id="rv-tourist">
+        <div class="rv-text">
+          <span class="rv-num">05</span>
+          <p class="rv-quote">"서울 도심을 <span class="rv-rh">완전히 새로운 시각으로</span> 즐겼어요. 경험 자체가 달랐습니다."</p>
+        </div>
+        <div class="rv-img">
+          <img src="Tourist.png" alt="tourist">
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PURCHASE -->
+    <section id="purchase-section" class="section">
+      <div class="purchase-grid">
+        <div class="purchase-img">
+          <img src="main image.png" alt="AXIS main product">
+        </div>
+        <div class="purchase-info sr">
+          <p class="eyebrow">Order</p>
+          <h2 class="purchase-title">AXIS</h2>
+          <p class="purchase-subtitle">Urban Traversal System</p>
+          <div class="purchase-price">
+           
+            <p class="purchase-price-num">₩ 2 2 1 , 0 1 7 , 6 9 0</p>
+          </div>
+          <ul class="purchase-includes">
+            <li>AXIS 본체 ×1</li>
+            <li>듀얼 케이블 모듈 ×2</li>
+            <li>안전 하네스 ×1</li>
+            <li>충전 모듈 ×1</li>
+          </ul>
+          <a href="#" class="purchase-cta">사전 예약하기</a>
+          <a href="mailto:axis@gmail.com" class="purchase-secondary">제품 문의</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <section id="footer-section" class="section">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand-block">
+            <span class="eyebrow">About Us</span>
+            <h2 class="footer-brand" style="margin-top:20px">AXIS<br><em>Urban Traversal</em><br>System</h2>
+            <p class="footer-about-text">
+              도시 이동의 흐름을 전환하는 차세대 퍼스널 모빌리티 시스템이다.
+              기존의 물리적 한계를 넘어 새로운 축(AXIS)을 세워
+              가장 직접적인 이동 경로를 설계한다.
+            </p>
+          </div>
+          <div>
+            <span class="footer-col-title">Information</span>
+            <div class="footer-info-stack">
+              <div><p class="footer-info-key">Project</p><p class="footer-info-val">AXIS: Urban Traversal System</p></div>
+              <div><p class="footer-info-key">Core Technology</p><p class="footer-info-val">3D Spatial Mobility &amp;<br>Kinetic Anchoring</p></div>
+              <div><p class="footer-info-key">Phase</p><p class="footer-info-val">Alpha Prototype v.1.0</p></div>
+            </div>
+          </div>
+          <div>
+            <span class="footer-col-title">Contact &amp; Address</span>
+            <div class="footer-info-stack">
+              <div><p class="footer-info-key">Location</p><p class="footer-info-val">AXIS Seoul Hub</p><p class="footer-info-val sub">서울 성동구 성수이로 20길 12, 4층</p></div>
+              <div><p class="footer-info-key">Inquiry</p><p class="footer-info-val"><a href="mailto:axis@gmail.com">axis@gmail.com</a></p></div>
+              <div><p class="footer-info-key">Support</p><p class="footer-info-val"><a href="tel:+820212345678">+82 (0)2 1234 5678</a></p></div>
+              <div><p class="footer-info-key">Social</p>
+                <div class="footer-social">
+                  <a href="#">Instagram</a>
+                  <a href="#">Facebook</a>
+                  <a href="#">Thread</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-copy">© 2026 AXIS Urban Traversal System. All Rights Reserved.</p>
+          <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <span>/</span>
+            <a href="#">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+
+    const introWords = document.querySelectorAll('.intro-word');
+    const introAxis  = document.getElementById('introAxis');
+    const introEl    = document.getElementById('intro');
+    const mainEl     = document.getElementById('main');
+
+    let delay = 0;
+    introWords.forEach(w => {
+      setTimeout(() => {
+        w.classList.add('show');
+        if (w.textContent.trim() === 'BREAK') w.style.color = '#FF0101';
+        setTimeout(() => w.classList.remove('show'), 400);
+      }, delay);
+      delay += 600;
+    });
+    setTimeout(() => introAxis.classList.add('show'),   delay);
+    setTimeout(() => introAxis.classList.add('expand'), delay + 650);
+    setTimeout(() => mainEl.classList.add('show'),      delay + 1000);
+    setTimeout(() => { introEl.style.opacity = '0'; },  delay + 2000);
+    setTimeout(() => {
+      introEl.style.display = 'none';
+      document.body.classList.add('ready');
+      initFeaturesGSAP();
+      initReviewAnimations();
+    }, delay + 2700);
+
+    document.querySelectorAll('main section').forEach(sec => {
+      new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const id = e.target.id;
+          document.querySelectorAll('.nav-link').forEach(link =>
+            link.classList.toggle('active', link.getAttribute('href') === `#${id}`)
+          );
+        });
+      }, { rootMargin: '-49% 0px -49% 0px', threshold: 0 }).observe(sec);
+    });
+
+    const whyusSection = document.getElementById('whyus-section');
+    const revealLayer  = document.getElementById('revealLayer');
+    let revealLocked   = false;
+
+    function spawnRevealStep(x, y, ox, oy) {
+      const el = document.createElement('div');
+      el.className = 'reveal-step';
+      const w = 260 + Math.random() * 80;
+      const h = 180 + Math.random() * 60;
+      el.style.cssText = `width:${w}px;height:${h}px;left:${x+ox}px;top:${y+oy}px`;
+      const inner = document.createElement('div');
+      inner.style.cssText = `
+        position:absolute;inset:0;
+        background-image:url("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnRxd2gyczIzbzNkemxuNDF0dDM0Y2RlNmJhZDczbDVjZzlsbDN1MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5tiLNVq0poAXL0SVIn/giphy.gif");
+        background-size:${whyusSection.offsetWidth}px ${whyusSection.offsetHeight}px;
+        background-position:${-(x+ox)+w/2}px ${-(y+oy)+h/2}px;
+        background-repeat:no-repeat;
+        filter:brightness(1.25) contrast(1.18) saturate(1.08);
+      `;
+      el.appendChild(inner);
+      revealLayer.appendChild(el);
+      setTimeout(() => el.remove(), 850);
+    }
+
+    whyusSection.addEventListener('mousemove', e => {
+      if (revealLocked) return;
+      const r = whyusSection.getBoundingClientRect();
+      spawnRevealStep(e.clientX - r.left, e.clientY - r.top,   0,   0);
+      spawnRevealStep(e.clientX - r.left, e.clientY - r.top,  90,  55);
+      spawnRevealStep(e.clientX - r.left, e.clientY - r.top, 180, 110);
+      revealLocked = true;
+      setTimeout(() => { revealLocked = false; }, 55);
+    });
+
+    const cursor = document.getElementById('cursor');
+    let mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my;
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function tickCursor() {
+      cx += (mx - cx) * .18;
+      cy += (my - cy) * .18;
+      cursor.style.left = cx + 'px';
+      cursor.style.top  = cy + 'px';
+      requestAnimationFrame(tickCursor);
+    })();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    document.querySelectorAll('.ts-real img, .purchase-img img, .rv-img img, .specs-exploded img').forEach(img => {
+      const onLoad = () => img.classList.add('loaded');
+      img.complete ? onLoad() : img.addEventListener('load', onLoad);
+    });
+
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.sr, .tech-pillar, .stat-block').forEach(el => revealObs.observe(el));
+
+    function initFeaturesGSAP() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      const stConfig = { trigger: '#features-viewport', start: 'top top', end: '+=300%', scrub: 1 };
+      const tl = gsap.timeline({ scrollTrigger: { ...stConfig, pin: true } });
+
+      gsap.to('.building-bg', { y: '35vh', ease: 'none', scrollTrigger: stConfig });
+
+      gsap.set('#cable1', { xPercent:-50, yPercent:-50, rotation:25,  opacity:0, x:'-80vw', y:'-40vh' });
+      gsap.set('#box1-a', { xPercent:-50, yPercent:-50, rotation:25,  opacity:0, x:'-20vw', y:'-45vh' });
+      gsap.set('#box1-b', { xPercent:-50, yPercent:-50, rotation:25,  opacity:0, x:'-20vw', y: '60vh' });
+      gsap.set('#cable2', { xPercent:-50, yPercent:-50, rotation:155,            x: '80vw', y:'-60vh' });
+
+      tl
+        .to('#cable1',          { opacity:1, x:'0vw',  y:'0vh',   duration:1.5, ease:'power2.out' })
+        .to('#box1-a',          { opacity:1, x:'-5vw', y:'-27vh', duration:.8  }, '-=1')
+        .to('#box1-b',          { opacity:1, x:'-5vw', y: '16vh', duration:.8  }, '-=0.8')
+        .to({},                 { duration:.5 })
+        .to('.feature-panel-2', { yPercent:-100,             duration:1.5, ease:'power3.inOut' })
+        .to('.p1-content',      { y:'-40vh', opacity:0,      duration:1.5, ease:'power3.inOut' }, '<')
+        .fromTo('#text2-top',   { opacity:0, y:30 }, { opacity:1, y:0, duration:1 }, '-=0.5')
+        .to('#step1',           { opacity:1, y:0, color:'var(--accent)', duration:.8 })
+        .to('#cable2',          { x:'40vw', y:'-30vh', duration:1, ease:'power2.out' }, '<')
+        .to('#step2',           { opacity:1, y:0, color:'var(--accent)', duration:.8 })
+        .to('#cable2',          { x:'20vw', y:'-15vh', duration:1, ease:'power2.out' }, '<')
+        .to('#step3',           { opacity:1, y:0, color:'var(--accent)', duration:.8 })
+        .to('#cable2',          { x:'0vw',  y:'0vh',  duration:1, ease:'power2.out' }, '<')
+        .to({},                 { duration:1 });
+
+      ScrollTrigger.refresh();
+    }
+
+    function initReviewAnimations() {
+
+      const blocks = [
+        { id: 'rv-courier',    from: { y: 70,  opacity: 0 } },
+        { id: 'rv-employee',   from: { y: 60,  x: 40, opacity: 0 } },
+        { id: 'rv-fieldworker',from: { y: 60,  x: -40, opacity: 0 } },
+        { id: 'rv-student',    from: { y: 80,  scale: 0.96, opacity: 0 } },
+        { id: 'rv-tourist',    from: { y: 50,  opacity: 0 } },
+      ];
+
+      blocks.forEach(({ id, from }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        gsap.from(el, {
+          ...from,
+          duration: 1.3,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 86%',
+            toggleActions: 'play none none none',
+          }
+        });
+
+        const img = el.querySelector('.rv-img img');
+        if (img) {
+          gsap.fromTo(img,
+            { yPercent: -8 },
+            {
+              yPercent: 8,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 1.2,
+              }
+            }
+          );
+        }
+      });
+
+      const specsImg = document.getElementById('specsExplodedImg');
+      if (specsImg) {
+        gsap.from(specsImg, {
+          scale: 1.04, opacity: 0, duration: 0.7, ease: 'power2.out',
+          scrollTrigger: { trigger: specsImg, start: 'top 90%', toggleActions: 'play none none none' }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
